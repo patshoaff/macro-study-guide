@@ -1,0 +1,934 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Macro Study Guide — Sessions 5–8</title>
+<style>
+  :root {
+    --gold: #cfae70;
+    --dark: #1a1a2e;
+    --darker: #12121f;
+    --card: #222240;
+    --card-hover: #2a2a4a;
+    --text: #e8e8f0;
+    --muted: #9999b8;
+    --green: #4ade80;
+    --red: #f87171;
+    --blue: #60a5fa;
+    --orange: #fb923c;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    background: var(--darker);
+    color: var(--text);
+    line-height: 1.65;
+    padding-bottom: 80px;
+  }
+  header {
+    background: linear-gradient(135deg, var(--dark), #1e1e3a);
+    border-bottom: 3px solid var(--gold);
+    padding: 32px 24px 24px;
+    text-align: center;
+    position: sticky; top: 0; z-index: 100;
+  }
+  header h1 { font-size: 1.6rem; color: var(--gold); letter-spacing: 1px; }
+  header p { color: var(--muted); font-size: 0.85rem; margin-top: 4px; }
+
+  /* Progress bar */
+  .progress-wrap {
+    max-width: 500px; margin: 14px auto 0; background: #333358;
+    border-radius: 10px; height: 10px; overflow: hidden;
+  }
+  .progress-bar { height: 100%; width: 0%; background: var(--gold); transition: width .4s ease; border-radius: 10px; }
+  .progress-label { color: var(--muted); font-size: .75rem; margin-top: 4px; }
+
+  /* Nav tabs */
+  .tab-nav {
+    display: flex; flex-wrap: wrap; justify-content: center; gap: 8px;
+    padding: 16px 16px 0; max-width: 900px; margin: 0 auto;
+  }
+  .tab-btn {
+    background: var(--card); color: var(--muted); border: 1px solid #333358;
+    padding: 8px 18px; border-radius: 8px 8px 0 0; cursor: pointer;
+    font-size: .85rem; font-weight: 600; transition: all .2s;
+  }
+  .tab-btn:hover { background: var(--card-hover); color: var(--text); }
+  .tab-btn.active { background: var(--gold); color: var(--dark); border-color: var(--gold); }
+
+  .tab-content { display: none; }
+  .tab-content.active { display: block; }
+
+  main { max-width: 900px; margin: 0 auto; padding: 0 16px; }
+
+  /* Session header */
+  .session-header {
+    margin: 24px 0 16px; padding: 16px 20px;
+    background: linear-gradient(135deg, var(--card), #2d2d50);
+    border-left: 4px solid var(--gold); border-radius: 8px;
+  }
+  .session-header h2 { color: var(--gold); font-size: 1.2rem; }
+  .session-header .subtitle { color: var(--muted); font-size: .82rem; margin-top: 2px; }
+
+  /* Flashcard / Q&A */
+  .card {
+    background: var(--card); border-radius: 10px; margin: 12px 0;
+    border: 1px solid #333358; overflow: hidden; transition: border-color .2s;
+  }
+  .card:hover { border-color: #444470; }
+  .card-q {
+    padding: 16px 20px; cursor: pointer; display: flex;
+    justify-content: space-between; align-items: center;
+    user-select: none;
+  }
+  .card-q:hover { background: var(--card-hover); }
+  .card-q .q-text { font-weight: 600; font-size: .95rem; flex: 1; padding-right: 12px; }
+  .card-q .badge {
+    font-size: .65rem; padding: 2px 8px; border-radius: 12px;
+    text-transform: uppercase; letter-spacing: .5px; font-weight: 700;
+    white-space: nowrap; margin-right: 10px;
+  }
+  .badge-concept { background: #3b3b6b; color: var(--blue); }
+  .badge-case { background: #3b2b1b; color: var(--orange); }
+  .badge-quiz { background: #1b3b2b; color: var(--green); }
+  .badge-calc { background: #3b1b2b; color: var(--red); }
+
+  .chevron {
+    width: 20px; height: 20px; transition: transform .25s;
+    color: var(--muted); flex-shrink: 0;
+  }
+  .card.open .chevron { transform: rotate(180deg); }
+
+  .card-a {
+    display: none; padding: 0 20px 18px; animation: fadeIn .25s ease;
+  }
+  .card.open .card-a { display: block; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(-6px); } to { opacity: 1; transform: translateY(0); } }
+
+  .tldr {
+    background: #1a2a3a; border-left: 3px solid var(--blue);
+    padding: 10px 14px; border-radius: 6px; margin-bottom: 12px;
+    font-size: .88rem; font-weight: 600; color: var(--blue);
+  }
+  .detail { color: var(--muted); font-size: .88rem; }
+  .detail p { margin-bottom: 8px; }
+  .detail strong { color: var(--text); }
+  .detail ul { margin: 6px 0 10px 18px; }
+  .detail li { margin-bottom: 4px; }
+
+  /* Self-test mode */
+  .self-test-bar {
+    text-align: center; padding: 12px;
+  }
+  .self-test-btn {
+    background: var(--gold); color: var(--dark); border: none;
+    padding: 10px 24px; border-radius: 8px; cursor: pointer;
+    font-weight: 700; font-size: .9rem; transition: all .2s;
+  }
+  .self-test-btn:hover { filter: brightness(1.1); transform: scale(1.02); }
+
+  .confidence-btns { display: flex; gap: 8px; margin-top: 10px; justify-content: center; }
+  .conf-btn {
+    padding: 6px 16px; border-radius: 6px; cursor: pointer;
+    font-size: .78rem; font-weight: 600; border: none; transition: all .15s;
+  }
+  .conf-btn:hover { transform: scale(1.05); }
+  .conf-got { background: #166534; color: #bbf7d0; }
+  .conf-shaky { background: #854d0e; color: #fde68a; }
+  .conf-miss { background: #991b1b; color: #fecaca; }
+
+  /* Responsive */
+  @media (max-width: 600px) {
+    header h1 { font-size: 1.2rem; }
+    .tab-btn { font-size: .75rem; padding: 6px 12px; }
+    .card-q .q-text { font-size: .88rem; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>MACROECONOMICS STUDY GUIDE</h1>
+  <p>Sessions 5–8 · Vanderbilt Owen GSM</p>
+  <div class="self-test-bar">
+    <button class="self-test-btn" onclick="toggleSelfTest()">🎯 Self-Test Mode</button>
+  </div>
+  <div class="progress-wrap"><div class="progress-bar" id="progressBar"></div></div>
+  <div class="progress-label" id="progressLabel">0 / 0 reviewed</div>
+</header>
+
+<nav class="tab-nav">
+  <button class="tab-btn active" data-tab="s5">5 · Monetary Policy</button>
+  <button class="tab-btn" data-tab="s6">6 · Institutions</button>
+  <button class="tab-btn" data-tab="s7">7 · BoP & FX I</button>
+  <button class="tab-btn" data-tab="s8">8 · BoP & FX II</button>
+  <button class="tab-btn" data-tab="quiz">Quiz Review</button>
+</nav>
+
+<main>
+
+<!-- =============== SESSION 5 =============== -->
+<div class="tab-content active" id="s5">
+<div class="session-header">
+  <h2>Session 5 — GDP & Government: Monetary Policy</h2>
+  <div class="subtitle">Presentation: Argentina under Milei · Case: Kinyuseisaku (Japan)</div>
+</div>
+
+<div class="card" data-id="s5-1">
+  <div class="card-q" onclick="toggle(this)">
+    <span class="badge badge-concept">Concept</span>
+    <span class="q-text">What is the money supply and how is it measured?</span>
+    <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+  </div>
+  <div class="card-a">
+    <div class="tldr">The money supply is the total amount of money circulating in an economy, measured in increasingly broad aggregates: M0 → M1 → M2 → M3.</div>
+    <div class="detail">
+      <p><strong>M0 (Monetary Base):</strong> Currency in circulation + bank reserves held at the central bank. This is what the central bank directly controls.</p>
+      <p><strong>M1 (Narrow Money):</strong> M0 + demand deposits (checking accounts) + other liquid deposits. This is the money most readily available for spending.</p>
+      <p><strong>M2:</strong> M1 + savings accounts + time deposits under $100K + retail money market funds. Broader measure capturing near-money assets.</p>
+      <p><strong>M3:</strong> M2 + large time deposits + institutional money market funds. The broadest measure (the Fed stopped publishing M3 in 2006).</p>
+      <p><strong>Key insight:</strong> The "money multiplier" means that M1 and M2 are much larger than M0, because banks lend out deposits, creating new money. When the Fed does QE, it expands M0 directly, hoping the multiplier transmits this into broader money supply growth.</p>
+    </div>
+    <div class="confidence-btns" style="display:none">
+      <button class="conf-btn conf-got" onclick="markConfidence(this,'got')">Got it</button>
+      <button class="conf-btn conf-shaky" onclick="markConfidence(this,'shaky')">Shaky</button>
+      <button class="conf-btn conf-miss" onclick="markConfidence(this,'miss')">Missed it</button>
+    </div>
+  </div>
+</div>
+
+<div class="card" data-id="s5-2">
+  <div class="card-q" onclick="toggle(this)">
+    <span class="badge badge-concept">Concept</span>
+    <span class="q-text">What is the goal of monetary policy? What are the tools?</span>
+    <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+  </div>
+  <div class="card-a">
+    <div class="tldr">Goal: Maintain price stability (target ~2% inflation) and promote maximum employment. Tools: open market operations, discount rate, reserve requirements, and unconventional tools like QE and forward guidance.</div>
+    <div class="detail">
+      <p><strong>Dual Mandate (Fed):</strong> Price stability + maximum employment. Other central banks (like the ECB) may focus primarily on price stability.</p>
+      <p><strong>Conventional Tools:</strong></p>
+      <ul>
+        <li><strong>Open Market Operations (OMO):</strong> Buying/selling government securities. Buying injects reserves → lowers rates. This is the primary day-to-day tool.</li>
+        <li><strong>Discount Rate:</strong> The rate charged to banks borrowing directly from the Fed. Acts as a ceiling on short-term rates.</li>
+        <li><strong>Reserve Requirements:</strong> The fraction of deposits banks must hold. Lowering this frees reserves for lending. (Reduced to 0% in March 2020.)</li>
+      </ul>
+      <p><strong>Unconventional Tools (when rates hit zero):</strong></p>
+      <ul>
+        <li><strong>Quantitative Easing (QE):</strong> Large-scale asset purchases (Treasuries, MBS) to lower long-term rates and inject liquidity when short-term rates can't go lower.</li>
+        <li><strong>Forward Guidance:</strong> Communicating future policy intentions to shape market expectations.</li>
+        <li><strong>Negative Interest Rates:</strong> Charging banks for holding excess reserves (used by BOJ, ECB).</li>
+      </ul>
+      <p><strong>Transmission mechanism:</strong> Central bank changes short-term rate → affects borrowing costs → influences consumption & investment → impacts aggregate demand → moves inflation and employment.</p>
+    </div>
+    <div class="confidence-btns" style="display:none">
+      <button class="conf-btn conf-got" onclick="markConfidence(this,'got')">Got it</button>
+      <button class="conf-btn conf-shaky" onclick="markConfidence(this,'shaky')">Shaky</button>
+      <button class="conf-btn conf-miss" onclick="markConfidence(this,'miss')">Missed it</button>
+    </div>
+  </div>
+</div>
+
+<div class="card" data-id="s5-3">
+  <div class="card-q" onclick="toggle(this)">
+    <span class="badge badge-case">Case</span>
+    <span class="q-text">Japan: What were the sources of the bubble economy? Why did it burst?</span>
+    <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+  </div>
+  <div class="card-a">
+    <div class="tldr">The bubble was fueled by loose monetary policy, financial deregulation, and speculative asset price inflation in real estate and stocks. It burst when the BOJ tightened policy sharply in 1989–90.</div>
+    <div class="detail">
+      <p><strong>Sources of the Bubble (mid-1980s):</strong></p>
+      <ul>
+        <li><strong>Plaza Accord (1985):</strong> Yen appreciation was supposed to reduce trade surpluses. BOJ lowered rates to offset the economic drag of a stronger yen.</li>
+        <li><strong>Loose monetary policy:</strong> BOJ kept the discount rate at a record low 2.5% from 1987–89, fueling cheap credit.</li>
+        <li><strong>Financial deregulation:</strong> Banks expanded lending aggressively, especially to real estate.</li>
+        <li><strong>Speculative feedback loop:</strong> Rising land/stock prices → more collateral → more borrowing → more buying → higher prices.</li>
+        <li>Nikkei stock index nearly tripled; urban land prices doubled in just a few years.</li>
+      </ul>
+      <p><strong>Why it burst:</strong></p>
+      <ul>
+        <li>BOJ raised the discount rate 5 times from May 1989 to August 1990 (2.5% → 6%).</li>
+        <li>Ministry of Finance imposed direct restrictions on bank lending to real estate.</li>
+        <li>Asset prices collapsed: Nikkei fell ~60% from its peak; real estate followed.</li>
+        <li>Banks were left with massive non-performing loans → credit crunch → deflationary spiral.</li>
+      </ul>
+    </div>
+    <div class="confidence-btns" style="display:none">
+      <button class="conf-btn conf-got" onclick="markConfidence(this,'got')">Got it</button>
+      <button class="conf-btn conf-shaky" onclick="markConfidence(this,'shaky')">Shaky</button>
+      <button class="conf-btn conf-miss" onclick="markConfidence(this,'miss')">Missed it</button>
+    </div>
+  </div>
+</div>
+
+<div class="card" data-id="s5-4">
+  <div class="card-q" onclick="toggle(this)">
+    <span class="badge badge-case">Case</span>
+    <span class="q-text">How do you assess the BOJ's monetary policy during the Lost Decade? Did it help?</span>
+    <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+  </div>
+  <div class="card-a">
+    <div class="tldr">The BOJ's response was widely criticized as "too little, too late." Rate cuts were slow and incremental, and the BOJ was reluctant to adopt unconventional tools until deflation was deeply entrenched.</div>
+    <div class="detail">
+      <p><strong>What the BOJ did:</strong></p>
+      <ul>
+        <li>Gradually lowered the discount rate through the 1990s, reaching effectively 0% by 1999 (ZIRP — Zero Interest Rate Policy).</li>
+        <li>Introduced QE in 2001 (first major central bank to do so), targeting bank reserves rather than interest rates.</li>
+        <li>Maintained ZIRP/QE through much of the 2000s.</li>
+      </ul>
+      <p><strong>Why it fell short:</strong></p>
+      <ul>
+        <li><strong>Too slow to cut:</strong> The BOJ actually raised rates briefly in 1997 and 2000, worsening downturns.</li>
+        <li><strong>Liquidity trap:</strong> Even at zero rates, banks wouldn't lend (bad balance sheets) and firms/consumers wouldn't borrow (deflation expectations). This is the core problem when monetary policy loses traction.</li>
+        <li><strong>Deflation expectations became embedded:</strong> Consumers delayed purchases expecting lower prices, further depressing demand.</li>
+        <li><strong>Banking system not cleaned up:</strong> Monetary policy alone couldn't fix insolvent banks. The government was slow to force write-downs and recapitalizations.</li>
+      </ul>
+      <p><strong>Key lesson:</strong> Monetary policy is necessary but not sufficient in a balance-sheet recession. You also need fiscal stimulus and banking sector reform. The BOJ's stop-start approach undermined credibility.</p>
+    </div>
+    <div class="confidence-btns" style="display:none">
+      <button class="conf-btn conf-got" onclick="markConfidence(this,'got')">Got it</button>
+      <button class="conf-btn conf-shaky" onclick="markConfidence(this,'shaky')">Shaky</button>
+      <button class="conf-btn conf-miss" onclick="markConfidence(this,'miss')">Missed it</button>
+    </div>
+  </div>
+</div>
+
+<div class="card" data-id="s5-5">
+  <div class="card-q" onclick="toggle(this)">
+    <span class="badge badge-case">Case</span>
+    <span class="q-text">Should the BOJ increase the interest rate in Fall 2007?</span>
+    <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+  </div>
+  <div class="card-a">
+    <div class="tldr">Arguments existed on both sides, but the stronger case was NO — Japan's recovery was fragile, deflation risks remained, and the global economy was about to enter the 2008 financial crisis.</div>
+    <div class="detail">
+      <p><strong>Arguments FOR raising rates:</strong></p>
+      <ul>
+        <li>Economy showed modest growth; keeping rates at 0.5% risked re-inflating asset bubbles.</li>
+        <li>Normalizing policy would give the BOJ ammunition for future downturns.</li>
+        <li>Ultra-low rates distort financial markets and encourage excessive risk-taking.</li>
+      </ul>
+      <p><strong>Arguments AGAINST (stronger case):</strong></p>
+      <ul>
+        <li>Inflation was barely positive — deflation risk remained. Premature tightening in 1997 and 2000 had already derailed recoveries.</li>
+        <li>Consumer spending and wage growth remained weak.</li>
+        <li>Global financial stress was building (subprime crisis emerging in the US).</li>
+        <li>The BOJ had already made the mistake of tightening prematurely twice — raising rates again risked repeating history.</li>
+      </ul>
+      <p><strong>What actually happened:</strong> The BOJ held rates steady, and when the 2008 crisis hit, it cut back to near-zero. The cautious approach was validated by events.</p>
+    </div>
+    <div class="confidence-btns" style="display:none">
+      <button class="conf-btn conf-got" onclick="markConfidence(this,'got')">Got it</button>
+      <button class="conf-btn conf-shaky" onclick="markConfidence(this,'shaky')">Shaky</button>
+      <button class="conf-btn conf-miss" onclick="markConfidence(this,'miss')">Missed it</button>
+    </div>
+  </div>
+</div>
+
+</div><!-- end s5 -->
+
+<!-- =============== SESSION 6 =============== -->
+<div class="tab-content" id="s6">
+<div class="session-header">
+  <h2>Session 6 — GDP & Institutions: National Differences</h2>
+  <div class="subtitle">Presentation: China's State Control · Film: American Factory</div>
+</div>
+
+<div class="card" data-id="s6-1">
+  <div class="card-q" onclick="toggle(this)">
+    <span class="badge badge-concept">Concept</span>
+    <span class="q-text">What shapes institutions (formal and informal)?</span>
+    <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+  </div>
+  <div class="card-a">
+    <div class="tldr">Formal institutions (laws, constitutions, property rights) are shaped by political processes and can change quickly. Informal institutions (culture, norms, trust) evolve slowly through history, religion, and social learning.</div>
+    <div class="detail">
+      <p><strong>Formal Institutions:</strong> Laws, regulations, constitutions, property rights systems, contract enforcement mechanisms. These are created by deliberate political/legal action and can be reformed relatively quickly.</p>
+      <p><strong>Informal Institutions:</strong> Culture, social norms, trust, customs, traditions. These evolve over generations and are much harder to change deliberately.</p>
+      <p><strong>Key shapers:</strong></p>
+      <ul>
+        <li><strong>Historical path dependence:</strong> Colonial origins, past political systems, and founding conditions create lasting institutional patterns (North & Thomas argument).</li>
+        <li><strong>Geography & resources:</strong> Natural endowments shape what institutions develop (e.g., extractive vs. inclusive institutions).</li>
+        <li><strong>Religion & philosophy:</strong> Influence attitudes toward work, savings, authority, and trust.</li>
+        <li><strong>Political power dynamics:</strong> Those in power shape formal institutions to protect their interests.</li>
+      </ul>
+      <p><strong>North & Thomas thesis:</strong> Institutions (especially property rights) are the fundamental cause of economic growth. Countries with secure property rights → more investment → more innovation → higher GDP per capita.</p>
+    </div>
+    <div class="confidence-btns" style="display:none">
+      <button class="conf-btn conf-got" onclick="markConfidence(this,'got')">Got it</button>
+      <button class="conf-btn conf-shaky" onclick="markConfidence(this,'shaky')">Shaky</button>
+      <button class="conf-btn conf-miss" onclick="markConfidence(this,'miss')">Missed it</button>
+    </div>
+  </div>
+</div>
+
+<div class="card" data-id="s6-2">
+  <div class="card-q" onclick="toggle(this)">
+    <span class="badge badge-concept">Concept</span>
+    <span class="q-text">How might property rights and culture impact economic growth?</span>
+    <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+  </div>
+  <div class="card-a">
+    <div class="tldr">Property rights drive investment and capital accumulation; culture shapes labor productivity, entrepreneurship, and how effectively technology is adopted. Both feed into the production function: Y = A · f(K, L).</div>
+    <div class="detail">
+      <p><strong>Through the Production Function (Y = A · f(K, L)):</strong></p>
+      <p><strong>Property rights affect K (Capital):</strong></p>
+      <ul>
+        <li>Secure property rights → willingness to invest (you keep the returns) → more physical and human capital accumulation.</li>
+        <li>De Soto's "Mystery of Capital": In developing countries, people hold assets but can't use them as collateral because titles aren't formalized. This "dead capital" can't fuel economic growth.</li>
+        <li>Without property rights, no one invests in long-term improvements because they can be seized.</li>
+      </ul>
+      <p><strong>Culture affects L (Labor) and A (Technology/Productivity):</strong></p>
+      <ul>
+        <li>Work ethic, attitudes toward education, trust, and cooperation all affect labor productivity.</li>
+        <li>Cultures with high trust → lower transaction costs → more efficient markets.</li>
+        <li>Cultural openness to innovation affects technology adoption (A).</li>
+        <li>"American Factory" illustrates: Same factory, same technology, but dramatically different productivity and management approaches between Chinese and American workers due to cultural differences.</li>
+      </ul>
+    </div>
+    <div class="confidence-btns" style="display:none">
+      <button class="conf-btn conf-got" onclick="markConfidence(this,'got')">Got it</button>
+      <button class="conf-btn conf-shaky" onclick="markConfidence(this,'shaky')">Shaky</button>
+      <button class="conf-btn conf-miss" onclick="markConfidence(this,'miss')">Missed it</button>
+    </div>
+  </div>
+</div>
+
+<div class="card" data-id="s6-3">
+  <div class="card-q" onclick="toggle(this)">
+    <span class="badge badge-concept">Concept</span>
+    <span class="q-text">What types of goods and services are most sensitive to cross-cultural differences?</span>
+    <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+  </div>
+  <div class="card-a">
+    <div class="tldr">Services and consumer-facing goods with high cultural content (food, entertainment, personal care, education, management practices) are most sensitive. Commodities and standardized industrial goods are least sensitive.</div>
+    <div class="detail">
+      <p><strong>Most sensitive:</strong></p>
+      <ul>
+        <li><strong>Food & beverage:</strong> Taste preferences, dietary restrictions, and dining customs vary enormously (e.g., McDonald's adapts menus globally).</li>
+        <li><strong>Media & entertainment:</strong> Humor, storytelling norms, and values differ across cultures.</li>
+        <li><strong>Personal care & beauty:</strong> Standards of beauty and grooming vary.</li>
+        <li><strong>Education & management services:</strong> Teaching styles, authority structures, and communication norms are deeply cultural (NUMMI case: Toyota's management system clashing with/adapting to American union culture).</li>
+        <li><strong>Financial services:</strong> Attitudes toward debt, savings, and risk differ culturally.</li>
+      </ul>
+      <p><strong>Least sensitive:</strong></p>
+      <ul>
+        <li>Commodities (oil, minerals, raw materials)</li>
+        <li>Industrial equipment and components</li>
+        <li>Technology infrastructure (servers, semiconductors)</li>
+        <li>Standardized B2B services</li>
+      </ul>
+      <p><strong>Managerial implication:</strong> The more culturally sensitive the product/service, the more a firm must localize rather than standardize when going international.</p>
+    </div>
+    <div class="confidence-btns" style="display:none">
+      <button class="conf-btn conf-got" onclick="markConfidence(this,'got')">Got it</button>
+      <button class="conf-btn conf-shaky" onclick="markConfidence(this,'shaky')">Shaky</button>
+      <button class="conf-btn conf-miss" onclick="markConfidence(this,'miss')">Missed it</button>
+    </div>
+  </div>
+</div>
+
+</div><!-- end s6 -->
+
+<!-- =============== SESSION 7 =============== -->
+<div class="tab-content" id="s7">
+<div class="session-header">
+  <h2>Session 7 — Open Economy: Balance of Payments & Exchange Rates I</h2>
+  <div class="subtitle">Presentation: Egypt's Trade Deficit & Currency Crisis</div>
+</div>
+
+<div class="card" data-id="s7-1">
+  <div class="card-q" onclick="toggle(this)">
+    <span class="badge badge-concept">Concept</span>
+    <span class="q-text">How does the Balance of Payments affect GDP?</span>
+    <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+  </div>
+  <div class="card-a">
+    <div class="tldr">Net exports (X − M) are a direct component of GDP. A trade surplus adds to GDP; a trade deficit subtracts. The capital/financial account mirrors the current account — deficits must be financed by foreign capital inflows.</div>
+    <div class="detail">
+      <p><strong>GDP identity:</strong> Y = C + I + G + (X − M)</p>
+      <p>Net exports (X − M) directly add to or subtract from GDP. A country running a current account deficit is spending more than it produces, financed by borrowing from abroad.</p>
+      <p><strong>The BoP always balances:</strong></p>
+      <ul>
+        <li>Current Account + Capital Account + Financial Account = 0</li>
+        <li>A current account deficit (importing more than exporting) must be offset by a financial account surplus (foreign investment flowing in).</li>
+        <li>Example: The US runs persistent current account deficits, financed by foreigners buying US Treasuries and other assets.</li>
+      </ul>
+      <p><strong>Policy implications:</strong> Persistent deficits mean accumulating foreign debt; persistent surpluses mean accumulating foreign assets. Neither is inherently good or bad — it depends on whether the borrowed capital is invested productively.</p>
+    </div>
+    <div class="confidence-btns" style="display:none">
+      <button class="conf-btn conf-got" onclick="markConfidence(this,'got')">Got it</button>
+      <button class="conf-btn conf-shaky" onclick="markConfidence(this,'shaky')">Shaky</button>
+      <button class="conf-btn conf-miss" onclick="markConfidence(this,'miss')">Missed it</button>
+    </div>
+  </div>
+</div>
+
+<div class="card" data-id="s7-2">
+  <div class="card-q" onclick="toggle(this)">
+    <span class="badge badge-concept">Concept</span>
+    <span class="q-text">What are the key determinants of exchange rates?</span>
+    <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+  </div>
+  <div class="card-a">
+    <div class="tldr">Interest rate differentials, inflation differentials, trade balances, capital flows, political stability, and market expectations/speculation all drive exchange rates.</div>
+    <div class="detail">
+      <p><strong>Key frameworks:</strong></p>
+      <ul>
+        <li><strong>Interest Rate Parity:</strong> Higher domestic interest rates attract foreign capital → currency appreciates (short-run). Investors seek the highest risk-adjusted return.</li>
+        <li><strong>Purchasing Power Parity (PPP):</strong> In the long run, exchange rates should adjust so that identical goods cost the same in different countries. If a country has higher inflation, its currency should depreciate.</li>
+        <li><strong>Trade flows:</strong> Countries with trade surpluses see demand for their currency (foreigners need it to buy exports) → appreciation.</li>
+        <li><strong>Capital flows:</strong> Foreign direct investment and portfolio investment create demand for the domestic currency.</li>
+        <li><strong>Expectations & speculation:</strong> Markets are forward-looking. Expected future changes in fundamentals move rates today.</li>
+        <li><strong>Political stability & institutional quality:</strong> Countries with stable, transparent institutions attract more capital → stronger currency.</li>
+      </ul>
+    </div>
+    <div class="confidence-btns" style="display:none">
+      <button class="conf-btn conf-got" onclick="markConfidence(this,'got')">Got it</button>
+      <button class="conf-btn conf-shaky" onclick="markConfidence(this,'shaky')">Shaky</button>
+      <button class="conf-btn conf-miss" onclick="markConfidence(this,'miss')">Missed it</button>
+    </div>
+  </div>
+</div>
+
+<div class="card" data-id="s7-3">
+  <div class="card-q" onclick="toggle(this)">
+    <span class="badge badge-concept">Concept</span>
+    <span class="q-text">How do exchange rates affect the Balance of Payments?</span>
+    <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+  </div>
+  <div class="card-a">
+    <div class="tldr">A weaker currency makes exports cheaper and imports more expensive, improving the trade balance over time (J-curve effect). A stronger currency does the opposite.</div>
+    <div class="detail">
+      <p><strong>Currency depreciation → BoP improvement (eventually):</strong></p>
+      <ul>
+        <li>Exports become cheaper for foreign buyers → export volume rises.</li>
+        <li>Imports become more expensive for domestic buyers → import volume falls.</li>
+        <li>Net effect: Current account improves.</li>
+      </ul>
+      <p><strong>The J-Curve:</strong> In the short run, depreciation can actually worsen the trade balance because existing contracts are in foreign currency (you pay more for already-committed imports). Over time (6–18 months), volumes adjust and the trade balance improves — tracing a "J" shape.</p>
+      <p><strong>Currency appreciation → BoP deterioration:</strong></p>
+      <ul>
+        <li>Exports become more expensive → volume falls.</li>
+        <li>Imports become cheaper → volume rises.</li>
+        <li>Current account worsens.</li>
+      </ul>
+      <p><strong>Feedback loop:</strong> Exchange rates and BoP influence each other. A trade deficit puts downward pressure on the currency, which eventually helps correct the deficit — a self-correcting mechanism (if the currency is floating).</p>
+    </div>
+    <div class="confidence-btns" style="display:none">
+      <button class="conf-btn conf-got" onclick="markConfidence(this,'got')">Got it</button>
+      <button class="conf-btn conf-shaky" onclick="markConfidence(this,'shaky')">Shaky</button>
+      <button class="conf-btn conf-miss" onclick="markConfidence(this,'miss')">Missed it</button>
+    </div>
+  </div>
+</div>
+
+</div><!-- end s7 -->
+
+<!-- =============== SESSION 8 =============== -->
+<div class="tab-content" id="s8">
+<div class="session-header">
+  <h2>Session 8 — Open Economy: Balance of Payments & Exchange Rates II</h2>
+  <div class="subtitle">Presentation: Turkey's 2018 Crisis · Case: NHL & the Stanley Cup</div>
+</div>
+
+<div class="card" data-id="s8-1">
+  <div class="card-q" onclick="toggle(this)">
+    <span class="badge badge-case">Case</span>
+    <span class="q-text">NHL Case: Why did the NHL mandate all contracts be paid in USD in the 1990s?</span>
+    <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+  </div>
+  <div class="card-a">
+    <div class="tldr">With 7 of 32 teams in Canada, paying in USD standardized costs across the league. But it meant Canadian teams bore exchange rate risk — when the CAD weakened against USD, their labor costs effectively skyrocketed in local currency terms.</div>
+    <div class="detail">
+      <p><strong>Rationale:</strong></p>
+      <ul>
+        <li>The majority of teams (25/32) were US-based, so USD was the natural common currency.</li>
+        <li>Standardizing in USD created a level playing field for the salary cap — all teams faced the same nominal cap.</li>
+        <li>It simplified league-wide financial management and revenue sharing.</li>
+      </ul>
+      <p><strong>The problem for Canadian teams:</strong></p>
+      <ul>
+        <li>Canadian teams earn most revenue in CAD (ticket sales, local TV, sponsorships) but pay salaries in USD.</li>
+        <li>When CAD depreciates vs. USD, Canadian teams' costs rise relative to revenue → competitive disadvantage.</li>
+        <li>In the late 1990s, the CAD weakened significantly, creating a financial crisis for Canadian franchises.</li>
+      </ul>
+    </div>
+    <div class="confidence-btns" style="display:none">
+      <button class="conf-btn conf-got" onclick="markConfidence(this,'got')">Got it</button>
+      <button class="conf-btn conf-shaky" onclick="markConfidence(this,'shaky')">Shaky</button>
+      <button class="conf-btn conf-miss" onclick="markConfidence(this,'miss')">Missed it</button>
+    </div>
+  </div>
+</div>
+
+<div class="card" data-id="s8-2">
+  <div class="card-q" onclick="toggle(this)">
+    <span class="badge badge-case">Case</span>
+    <span class="q-text">NHL Case: What was the impact of oil prices on Canada's interest rate policy, inflation, and exchange rate?</span>
+    <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+  </div>
+  <div class="card-a">
+    <div class="tldr">Canada is a major oil exporter. Rising oil prices → stronger CAD (commodity currency effect), higher GDP growth, potential inflation pressure → Bank of Canada may raise rates. This chain reaction directly affected NHL team economics.</div>
+    <div class="detail">
+      <p><strong>The chain:</strong></p>
+      <ul>
+        <li><strong>Oil prices rise →</strong> Canada's export revenues surge (oil is a major export) → current account improves → demand for CAD increases → <strong>CAD appreciates.</strong></li>
+        <li><strong>Higher oil revenues →</strong> Economic boom in oil-producing provinces → demand-pull inflation pressure → <strong>Bank of Canada may raise interest rates</strong> to contain inflation.</li>
+        <li><strong>Higher rates →</strong> Further attract foreign capital → additional upward pressure on CAD.</li>
+      </ul>
+      <p><strong>NHL connection:</strong> When oil prices surged in the 2000s, the CAD strengthened dramatically (from ~$0.62 USD in 2002 to near parity by 2007). This was actually good for Canadian NHL teams — their CAD revenues were now worth more in USD terms, making salary cap obligations easier to meet.</p>
+      <p><strong>The reverse:</strong> When oil prices collapsed, CAD weakened → Canadian teams struggled again.</p>
+    </div>
+    <div class="confidence-btns" style="display:none">
+      <button class="conf-btn conf-got" onclick="markConfidence(this,'got')">Got it</button>
+      <button class="conf-btn conf-shaky" onclick="markConfidence(this,'shaky')">Shaky</button>
+      <button class="conf-btn conf-miss" onclick="markConfidence(this,'miss')">Missed it</button>
+    </div>
+  </div>
+</div>
+
+<div class="card" data-id="s8-3">
+  <div class="card-q" onclick="toggle(this)">
+    <span class="badge badge-case">Case</span>
+    <span class="q-text">NHL Case: Why do oil prices impact salary caps? How do macro factors affect managers like Bowman?</span>
+    <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+  </div>
+  <div class="card-a">
+    <div class="tldr">The salary cap is set as a percentage of total league revenue. Canadian TV revenue (paid in CAD) converts to more USD when CAD is strong — boosting total league revenue and thus the cap. Managers must understand FX trends to plan roster construction.</div>
+    <div class="detail">
+      <p><strong>Oil → Exchange Rate → Salary Cap:</strong></p>
+      <ul>
+        <li>NHL salary cap = fixed % of "Hockey Related Revenue" (HRR).</li>
+        <li>Canadian teams generate significant revenue in CAD (Canadian TV contracts, gate receipts).</li>
+        <li>When oil prices rise → CAD strengthens → Canadian revenue converts to more USD → HRR increases → salary cap goes up.</li>
+        <li>Conversely, falling oil → weaker CAD → less USD revenue → lower cap.</li>
+      </ul>
+      <p><strong>Impact on managers:</strong></p>
+      <ul>
+        <li><strong>Roster planning:</strong> If you expect the cap to rise (strong oil/strong CAD), you can plan to sign players to contracts that ramp up. If you expect it to fall, you need cap flexibility.</li>
+        <li><strong>Contract currency risk:</strong> Managers of Canadian teams must consider how FX movements affect their real cost structure.</li>
+        <li><strong>Competitive strategy:</strong> Macro awareness becomes a competitive advantage. A GM who understands these dynamics can time free agency moves better.</li>
+        <li><strong>Broader lesson:</strong> Even in industries that seem purely domestic (hockey), macroeconomic forces — oil prices, exchange rates, monetary policy — have real operational consequences.</li>
+      </ul>
+    </div>
+    <div class="confidence-btns" style="display:none">
+      <button class="conf-btn conf-got" onclick="markConfidence(this,'got')">Got it</button>
+      <button class="conf-btn conf-shaky" onclick="markConfidence(this,'shaky')">Shaky</button>
+      <button class="conf-btn conf-miss" onclick="markConfidence(this,'miss')">Missed it</button>
+    </div>
+  </div>
+</div>
+
+</div><!-- end s8 -->
+
+<!-- =============== QUIZ REVIEW =============== -->
+<div class="tab-content" id="quiz">
+<div class="session-header">
+  <h2>Quiz Review — Practice Questions</h2>
+  <div class="subtitle">From your scanned review sheet</div>
+</div>
+
+<div class="card" data-id="q-1a">
+  <div class="card-q" onclick="toggle(this)">
+    <span class="badge badge-quiz">Quiz</span>
+    <span class="q-text">Why would you NOT initially use QE at the March 2020 lockdown? (See FRED graphs)</span>
+    <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+  </div>
+  <div class="card-a">
+    <div class="tldr">Because the Federal Funds Rate was ~1.5–1.75% in early 2020 — there was still room to cut conventional interest rates before needing the unconventional tool of QE.</div>
+    <div class="detail">
+      <p><strong>From the FRED graphs:</strong> GDP was growing steadily (~$21,500B) and the Fed Funds Rate had been raised to ~2.4% before being cut to ~1.5–1.75% heading into 2020.</p>
+      <p><strong>Why not QE first?</strong></p>
+      <ul>
+        <li>QE is an <strong>unconventional</strong> tool — you use it when conventional tools (rate cuts) are exhausted (i.e., rates are at or near zero).</li>
+        <li>With rates at 1.5–1.75%, the Fed had 150–175 basis points of conventional rate cuts available.</li>
+        <li>Conventional rate cuts are more predictable and better understood by markets.</li>
+        <li>QE has diminishing returns and can distort asset markets — it's a tool of last resort.</li>
+      </ul>
+      <p><strong>What the Fed actually did:</strong> Cut rates to 0–0.25% in two emergency meetings (March 3 and March 15, 2020), THEN launched massive QE ($700B+ in asset purchases) once rates hit zero.</p>
+    </div>
+    <div class="confidence-btns" style="display:none">
+      <button class="conf-btn conf-got" onclick="markConfidence(this,'got')">Got it</button>
+      <button class="conf-btn conf-shaky" onclick="markConfidence(this,'shaky')">Shaky</button>
+      <button class="conf-btn conf-miss" onclick="markConfidence(this,'miss')">Missed it</button>
+    </div>
+  </div>
+</div>
+
+<div class="card" data-id="q-1b">
+  <div class="card-q" onclick="toggle(this)">
+    <span class="badge badge-quiz">Quiz</span>
+    <span class="q-text">When would you continue to NOT use QE? (AD-AS framework)</span>
+    <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+  </div>
+  <div class="card-a">
+    <div class="tldr">You wouldn't use QE when: (1) interest rates are still above zero (conventional tools available), (2) the shock is a supply shock (QE stimulates demand, not supply), or (3) inflation is already high.</div>
+    <div class="detail">
+      <p><strong>Using AD-AS:</strong></p>
+      <p><strong>Scenario 1 — Supply shock (AS shifts left):</strong> If the shock is supply-side (e.g., supply chain disruption, oil embargo), prices rise while output falls (stagflation). QE would shift AD right, which would increase output but also push prices even higher. Monetary policy can't fix a supply problem.</p>
+      <p><strong>Scenario 2 — Rates above zero:</strong> If the Fed Funds Rate still has room to fall, conventional rate cuts are preferred. QE is the "break glass in case of emergency" tool for when you're at the zero lower bound.</p>
+      <p><strong>Scenario 3 — Inflationary demand shock:</strong> If AD has already shifted right (demand-pull inflation), QE would make it worse. You'd want tighter policy, not looser.</p>
+      <p><strong>Key rule of thumb:</strong> QE is appropriate only for <strong>demand deficiency</strong> when rates are at zero and the economy is well below potential output.</p>
+    </div>
+    <div class="confidence-btns" style="display:none">
+      <button class="conf-btn conf-got" onclick="markConfidence(this,'got')">Got it</button>
+      <button class="conf-btn conf-shaky" onclick="markConfidence(this,'shaky')">Shaky</button>
+      <button class="conf-btn conf-miss" onclick="markConfidence(this,'miss')">Missed it</button>
+    </div>
+  </div>
+</div>
+
+<div class="card" data-id="q-2a">
+  <div class="card-q" onclick="toggle(this)">
+    <span class="badge badge-quiz">Quiz</span>
+    <span class="q-text">How do institutions shape economic growth? (Use the production function)</span>
+    <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+  </div>
+  <div class="card-a">
+    <div class="tldr">Institutions affect all three components of Y = A · f(K, L). Property rights drive K (investment), culture/education shape L (productivity), and institutional quality determines A (how efficiently resources are used).</div>
+    <div class="detail">
+      <p><strong>Y = A · f(K, L)</strong></p>
+      <p><strong>Impact on K (Capital):</strong> Secure property rights → people invest because they're confident they'll keep returns. Without property rights, capital accumulation stalls. This is the core North & Thomas argument — institutions that protect property rights are the fundamental cause of Western economic growth.</p>
+      <p><strong>Impact on L (Labor):</strong> Institutions shape education systems, labor market flexibility, and human capital development. Cultural institutions (work ethic, attitudes toward education) affect labor quality and effort.</p>
+      <p><strong>Impact on A (Total Factor Productivity / Technology):</strong> Good institutions → rule of law, contract enforcement, low corruption → efficient resource allocation. Innovation flourishes when inventors can patent and profit from their ideas. Open institutions promote knowledge sharing and technology adoption.</p>
+      <p><strong>The handwritten note on your review sheet mentions "spending, investment" — this connects to:</strong> Government spending (G) and private investment (I) are both influenced by institutional quality. Good institutions attract both domestic and foreign investment.</p>
+    </div>
+    <div class="confidence-btns" style="display:none">
+      <button class="conf-btn conf-got" onclick="markConfidence(this,'got')">Got it</button>
+      <button class="conf-btn conf-shaky" onclick="markConfidence(this,'shaky')">Shaky</button>
+      <button class="conf-btn conf-miss" onclick="markConfidence(this,'miss')">Missed it</button>
+    </div>
+  </div>
+</div>
+
+<div class="card" data-id="q-2b">
+  <div class="card-q" onclick="toggle(this)">
+    <span class="badge badge-quiz">Quiz</span>
+    <span class="q-text">True or False: Culture is inherited or biologically based?</span>
+    <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+  </div>
+  <div class="card-a">
+    <div class="tldr">FALSE. Culture is learned through socialization, not inherited biologically. However, TRUE that people as members of a group share culture — it's a collective, not individual, phenomenon.</div>
+    <div class="detail">
+      <p><strong>(i) Culture is inherited or biologically based — FALSE.</strong> Culture is acquired through learning and experience within a social context. A child raised in a different culture will adopt that culture, not the one of their biological parents. Culture is transmitted through socialization, education, and shared experience.</p>
+      <p><strong>(ii) People as members of a group share culture; it is not specific to a single individual — TRUE.</strong> Culture is by definition a collective phenomenon — it's the shared values, norms, beliefs, and practices of a group. An individual may have personal preferences, but culture exists at the group level (national, organizational, professional, etc.).</p>
+    </div>
+    <div class="confidence-btns" style="display:none">
+      <button class="conf-btn conf-got" onclick="markConfidence(this,'got')">Got it</button>
+      <button class="conf-btn conf-shaky" onclick="markConfidence(this,'shaky')">Shaky</button>
+      <button class="conf-btn conf-miss" onclick="markConfidence(this,'miss')">Missed it</button>
+    </div>
+  </div>
+</div>
+
+<div class="card" data-id="q-3a">
+  <div class="card-q" onclick="toggle(this)">
+    <span class="badge badge-quiz">Quiz</span>
+    <span class="q-text">Why do countries peg their exchange rates?</span>
+    <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+  </div>
+  <div class="card-a">
+    <div class="tldr">To reduce exchange rate volatility, anchor inflation expectations, promote trade stability, and signal monetary credibility — especially useful for small or developing economies.</div>
+    <div class="detail">
+      <ul>
+        <li><strong>Reduce uncertainty:</strong> Fixed rates eliminate FX risk for importers/exporters, encouraging trade and investment.</li>
+        <li><strong>Inflation anchor:</strong> Pegging to a strong currency (e.g., USD) imports that country's monetary discipline. If your central bank lacks credibility, borrowing the Fed's credibility via a peg can tame inflation expectations.</li>
+        <li><strong>Attract investment:</strong> Foreign investors prefer predictable exchange rates; a peg reduces their currency risk.</li>
+        <li><strong>Small open economies:</strong> Countries heavily dependent on trade benefit most because exchange rate swings would cause large GDP fluctuations.</li>
+      </ul>
+      <p><strong>The tradeoff (Impossible Trinity):</strong> A country cannot simultaneously have a fixed exchange rate, free capital flows, and independent monetary policy. By pegging, you give up independent monetary policy — you must match the anchor country's interest rates.</p>
+    </div>
+    <div class="confidence-btns" style="display:none">
+      <button class="conf-btn conf-got" onclick="markConfidence(this,'got')">Got it</button>
+      <button class="conf-btn conf-shaky" onclick="markConfidence(this,'shaky')">Shaky</button>
+      <button class="conf-btn conf-miss" onclick="markConfidence(this,'miss')">Missed it</button>
+    </div>
+  </div>
+</div>
+
+<div class="card" data-id="q-3b">
+  <div class="card-q" onclick="toggle(this)">
+    <span class="badge badge-quiz">Quiz</span>
+    <span class="q-text">Why might the spot exchange rate differ from PPP?</span>
+    <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+  </div>
+  <div class="card-a">
+    <div class="tldr">PPP assumes frictionless trade in identical goods. In reality, transportation costs, tariffs, non-traded goods/services, capital flows, and speculation all cause spot rates to deviate from PPP — sometimes for years.</div>
+    <div class="detail">
+      <ul>
+        <li><strong>Transaction costs:</strong> Shipping, tariffs, and trade barriers prevent goods from being arbitraged across borders.</li>
+        <li><strong>Non-traded goods:</strong> Services (haircuts, rent, legal advice) can't be traded internationally, so their prices vary wildly across countries without affecting exchange rates.</li>
+        <li><strong>Capital flows:</strong> Short-term exchange rates are driven more by capital flows (investment seeking higher returns) than by trade in goods.</li>
+        <li><strong>Speculation:</strong> Traders bet on future rate movements, pushing spot rates away from PPP.</li>
+        <li><strong>Balassa-Samuelson effect:</strong> Richer countries tend to have higher price levels because their productivity in traded goods pushes up wages economy-wide, including in non-traded sectors.</li>
+        <li><strong>Government intervention:</strong> Central banks buy/sell foreign reserves to influence exchange rates.</li>
+      </ul>
+      <p><strong>Bottom line:</strong> PPP is a useful long-run anchor, but short-to-medium-run exchange rates are dominated by capital flows and expectations.</p>
+    </div>
+    <div class="confidence-btns" style="display:none">
+      <button class="conf-btn conf-got" onclick="markConfidence(this,'got')">Got it</button>
+      <button class="conf-btn conf-shaky" onclick="markConfidence(this,'shaky')">Shaky</button>
+      <button class="conf-btn conf-miss" onclick="markConfidence(this,'miss')">Missed it</button>
+    </div>
+  </div>
+</div>
+
+<div class="card" data-id="q-3c">
+  <div class="card-q" onclick="toggle(this)">
+    <span class="badge badge-calc">Calc</span>
+    <span class="q-text">Big Mac: 75 pesos (Mexico) vs. $5.25 (US), spot rate = 18 MXN/USD. PPP rate? Under/overvalued?</span>
+    <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+  </div>
+  <div class="card-a">
+    <div class="tldr">Implied PPP rate = 75 ÷ 5.25 = 14.29 pesos/USD. Since the actual rate is 18 (more pesos per dollar), the peso is undervalued — it's cheaper than PPP implies it should be.</div>
+    <div class="detail">
+      <p><strong>Step-by-step:</strong></p>
+      <p><strong>1. Calculate implied PPP exchange rate:</strong></p>
+      <p>PPP rate = Price in Mexico ÷ Price in US = 75 pesos ÷ $5.25 = <strong>14.29 pesos per USD</strong></p>
+      <p><strong>2. Compare to actual spot rate:</strong></p>
+      <p>Actual spot rate = 18 pesos per USD</p>
+      <p>PPP implies it should be 14.29 pesos per USD</p>
+      <p><strong>3. Interpretation:</strong></p>
+      <p>The actual rate (18) means you need MORE pesos to buy one dollar than PPP suggests (14.29). This means the peso is <strong>undervalued</strong> relative to PPP — the dollar buys more pesos than it "should."</p>
+      <p>Alternatively: At PPP, a Big Mac should cost the equivalent of $5.25 everywhere. At the spot rate, 75 pesos ÷ 18 = $4.17. The Mexican Big Mac is cheaper in dollar terms → peso is undervalued.</p>
+      <p><strong>% undervaluation:</strong> (14.29 − 18) ÷ 18 = −20.6% undervalued.</p>
+    </div>
+    <div class="confidence-btns" style="display:none">
+      <button class="conf-btn conf-got" onclick="markConfidence(this,'got')">Got it</button>
+      <button class="conf-btn conf-shaky" onclick="markConfidence(this,'shaky')">Shaky</button>
+      <button class="conf-btn conf-miss" onclick="markConfidence(this,'miss')">Missed it</button>
+    </div>
+  </div>
+</div>
+
+<div class="card" data-id="q-4a">
+  <div class="card-q" onclick="toggle(this)">
+    <span class="badge badge-quiz">Quiz</span>
+    <span class="q-text">Would a current account surplus strengthen or weaken a country's currency?</span>
+    <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+  </div>
+  <div class="card-a">
+    <div class="tldr">STRENGTHEN. A current account surplus means the country exports more than it imports — foreign buyers need the domestic currency to pay for those exports, increasing demand for it.</div>
+    <div class="detail">
+      <p><strong>Mechanism:</strong></p>
+      <ul>
+        <li>Trade surplus → foreigners buy more of our goods → they need our currency to pay → demand for domestic currency rises → currency appreciates.</li>
+        <li>Conversely, we're importing less → we sell less of our currency to buy foreign goods → less supply of domestic currency on FX markets.</li>
+        <li>Higher demand + lower supply = appreciation.</li>
+      </ul>
+      <p><strong>Example:</strong> China's massive trade surpluses created persistent upward pressure on the yuan, which is why China actively intervened to prevent appreciation (accumulating trillions in foreign reserves).</p>
+    </div>
+    <div class="confidence-btns" style="display:none">
+      <button class="conf-btn conf-got" onclick="markConfidence(this,'got')">Got it</button>
+      <button class="conf-btn conf-shaky" onclick="markConfidence(this,'shaky')">Shaky</button>
+      <button class="conf-btn conf-miss" onclick="markConfidence(this,'miss')">Missed it</button>
+    </div>
+  </div>
+</div>
+
+<div class="card" data-id="q-4b">
+  <div class="card-q" onclick="toggle(this)">
+    <span class="badge badge-quiz">Quiz</span>
+    <span class="q-text">Would lowering interest rates strengthen or weaken a country's currency?</span>
+    <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+  </div>
+  <div class="card-a">
+    <div class="tldr">WEAKEN. Lower rates make domestic assets less attractive to foreign investors → capital outflows → less demand for domestic currency → depreciation.</div>
+    <div class="detail">
+      <p><strong>Mechanism:</strong></p>
+      <ul>
+        <li>Lower interest rates → lower returns on domestic bonds and deposits.</li>
+        <li>Foreign investors move capital to countries with higher rates (seeking better returns).</li>
+        <li>They sell the domestic currency and buy foreign currency → domestic currency depreciates.</li>
+        <li>Domestic investors may also move money abroad for better returns → additional outward pressure.</li>
+      </ul>
+      <p><strong>This is actually by design:</strong> Central banks sometimes cut rates partly to weaken the currency, making exports more competitive and boosting the trade balance. A weaker currency acts as an additional stimulus channel.</p>
+    </div>
+    <div class="confidence-btns" style="display:none">
+      <button class="conf-btn conf-got" onclick="markConfidence(this,'got')">Got it</button>
+      <button class="conf-btn conf-shaky" onclick="markConfidence(this,'shaky')">Shaky</button>
+      <button class="conf-btn conf-miss" onclick="markConfidence(this,'miss')">Missed it</button>
+    </div>
+  </div>
+</div>
+
+</div><!-- end quiz -->
+
+</main>
+
+<script>
+// Tab navigation
+document.querySelectorAll('.tab-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById(btn.dataset.tab).classList.add('active');
+  });
+});
+
+// Toggle cards
+function toggle(el) {
+  const card = el.closest('.card');
+  card.classList.toggle('open');
+  updateProgress();
+}
+
+// Self-test mode
+let selfTestMode = false;
+function toggleSelfTest() {
+  selfTestMode = !selfTestMode;
+  document.querySelectorAll('.confidence-btns').forEach(b => {
+    b.style.display = selfTestMode ? 'flex' : 'none';
+  });
+  document.querySelector('.self-test-btn').textContent = selfTestMode ? '✕ Exit Self-Test' : '🎯 Self-Test Mode';
+  // In self-test mode, collapse all cards
+  if (selfTestMode) {
+    document.querySelectorAll('.card').forEach(c => c.classList.remove('open'));
+  }
+}
+
+// Confidence tracking
+const scores = {};
+function markConfidence(btn, level) {
+  const card = btn.closest('.card');
+  const id = card.dataset.id;
+  scores[id] = level;
+  card.style.borderLeftWidth = '4px';
+  card.style.borderLeftColor = level === 'got' ? '#4ade80' : level === 'shaky' ? '#fb923c' : '#f87171';
+  // Auto-close and open next
+  card.classList.remove('open');
+  const next = card.nextElementSibling;
+  if (next && next.classList.contains('card')) {
+    setTimeout(() => { next.classList.add('open'); next.scrollIntoView({ behavior: 'smooth', block: 'center' }); }, 300);
+  }
+  updateProgress();
+}
+
+// Progress tracking
+function updateProgress() {
+  const total = document.querySelectorAll('.card').length;
+  const opened = document.querySelectorAll('.card.open').length;
+  const scored = Object.keys(scores).length;
+  const reviewed = selfTestMode ? scored : document.querySelectorAll('.card[style*="border-left"]').length || opened;
+  const pct = selfTestMode ? (scored / total * 100) : 0;
+
+  if (selfTestMode) {
+    document.getElementById('progressBar').style.width = pct + '%';
+    const got = Object.values(scores).filter(s => s === 'got').length;
+    const shaky = Object.values(scores).filter(s => s === 'shaky').length;
+    const miss = Object.values(scores).filter(s => s === 'miss').length;
+    document.getElementById('progressLabel').textContent =
+      `${scored}/${total} reviewed · ✓ ${got}  ~ ${shaky}  ✗ ${miss}`;
+  } else {
+    document.getElementById('progressBar').style.width = '0%';
+    document.getElementById('progressLabel').textContent = `${total} questions across 5 sections`;
+  }
+}
+updateProgress();
+</script>
+</body>
+</html>
