@@ -1,0 +1,957 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quiz 1 Study Guide — Macroeconomics</title>
+<style>
+  :root {
+    --gold: #CFAE70;
+    --navy: #1C2541;
+    --dark: #0B132B;
+    --mid: #3A506B;
+    --light: #5BC0BE;
+    --bg: #F7F7F8;
+    --card: #FFFFFF;
+    --text: #1a1a2e;
+    --muted: #6b7280;
+    --success: #10b981;
+    --danger: #ef4444;
+    --warning: #f59e0b;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.7;
+    padding: 0;
+  }
+
+  /* Top nav */
+  .topbar {
+    background: var(--dark);
+    color: white;
+    padding: 16px 24px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.3);
+  }
+  .topbar h1 { font-size: 1.1rem; font-weight: 600; }
+  .topbar .subtitle { color: var(--gold); font-size: 0.85rem; }
+
+  /* Tab navigation */
+  .tab-nav {
+    display: flex;
+    background: var(--navy);
+    overflow-x: auto;
+    padding: 0 16px;
+    gap: 4px;
+  }
+  .tab-btn {
+    padding: 12px 20px;
+    background: transparent;
+    color: #aaa;
+    border: none;
+    border-bottom: 3px solid transparent;
+    cursor: pointer;
+    font-size: 0.9rem;
+    font-weight: 500;
+    white-space: nowrap;
+    transition: all 0.2s;
+  }
+  .tab-btn:hover { color: white; background: rgba(255,255,255,0.05); }
+  .tab-btn.active { color: var(--gold); border-bottom-color: var(--gold); }
+
+  /* Content area */
+  .content { max-width: 900px; margin: 0 auto; padding: 24px 20px 80px; }
+  .tab-panel { display: none; }
+  .tab-panel.active { display: block; }
+
+  /* Cards */
+  .card {
+    background: var(--card);
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 20px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+    border-left: 4px solid var(--mid);
+  }
+  .card.highlight { border-left-color: var(--gold); }
+  .card.concept { border-left-color: var(--light); }
+  .card.warning { border-left-color: var(--warning); }
+  .card.danger { border-left-color: var(--danger); }
+
+  .card h2 { font-size: 1.3rem; color: var(--navy); margin-bottom: 12px; }
+  .card h3 { font-size: 1.1rem; color: var(--mid); margin: 16px 0 8px; }
+
+  /* Key term styling */
+  .term {
+    display: inline;
+    font-weight: 700;
+    color: var(--navy);
+    background: rgba(207,174,112,0.15);
+    padding: 1px 6px;
+    border-radius: 4px;
+  }
+
+  /* Formula box */
+  .formula {
+    background: #f0f4ff;
+    border: 1px solid #c7d2fe;
+    border-radius: 8px;
+    padding: 16px 20px;
+    margin: 12px 0;
+    font-family: 'Georgia', serif;
+    font-size: 1.1rem;
+    text-align: center;
+    letter-spacing: 0.5px;
+  }
+
+  /* Expandable sections */
+  details {
+    margin: 10px 0;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  summary {
+    padding: 14px 18px;
+    background: #f9fafb;
+    cursor: pointer;
+    font-weight: 600;
+    color: var(--navy);
+    list-style: none;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    user-select: none;
+  }
+  summary::before {
+    content: '▶';
+    font-size: 0.7rem;
+    transition: transform 0.2s;
+    color: var(--mid);
+  }
+  details[open] > summary::before { transform: rotate(90deg); }
+  summary:hover { background: #f3f4f6; }
+  .detail-content { padding: 16px 18px; }
+
+  /* AD-AS Diagram (SVG-based) */
+  .diagram-container {
+    background: white;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    padding: 20px;
+    margin: 16px 0;
+    text-align: center;
+    overflow-x: auto;
+  }
+  .diagram-container svg { max-width: 100%; }
+
+  /* Quiz section */
+  .quiz-q {
+    background: var(--card);
+    border-radius: 10px;
+    padding: 20px;
+    margin-bottom: 16px;
+    border: 1px solid #e5e7eb;
+  }
+  .quiz-q .q-label {
+    font-weight: 700;
+    color: var(--navy);
+    margin-bottom: 8px;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  .quiz-q p { margin-bottom: 12px; font-weight: 500; }
+
+  .answer-btn {
+    background: var(--navy);
+    color: white;
+    border: none;
+    padding: 8px 18px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.85rem;
+    transition: background 0.2s;
+  }
+  .answer-btn:hover { background: var(--mid); }
+
+  .answer-text {
+    display: none;
+    margin-top: 12px;
+    padding: 14px;
+    background: #f0fdf4;
+    border-radius: 8px;
+    border-left: 3px solid var(--success);
+    line-height: 1.7;
+  }
+  .answer-text.visible { display: block; }
+
+  /* Table styling */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 12px 0;
+    font-size: 0.95rem;
+  }
+  th {
+    background: var(--navy);
+    color: white;
+    padding: 10px 14px;
+    text-align: left;
+    font-weight: 600;
+  }
+  td {
+    padding: 10px 14px;
+    border-bottom: 1px solid #e5e7eb;
+  }
+  tr:nth-child(even) td { background: #f9fafb; }
+
+  /* Lists */
+  ul, ol { padding-left: 24px; margin: 8px 0; }
+  li { margin-bottom: 6px; }
+
+  /* Mnemonic boxes */
+  .mnemonic {
+    background: linear-gradient(135deg, #fef3c7, #fde68a);
+    border-radius: 10px;
+    padding: 16px 20px;
+    margin: 14px 0;
+    border: 1px solid #f59e0b;
+  }
+  .mnemonic strong { color: #92400e; }
+
+  /* Comparison box */
+  .compare-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin: 14px 0;
+  }
+  .compare-item {
+    background: #f9fafb;
+    border-radius: 8px;
+    padding: 16px;
+    border: 1px solid #e5e7eb;
+  }
+  .compare-item h4 { color: var(--navy); margin-bottom: 8px; }
+
+  /* Progress tracker */
+  .progress-bar {
+    height: 4px;
+    background: rgba(255,255,255,0.2);
+    border-radius: 4px;
+    overflow: hidden;
+    width: 200px;
+  }
+  .progress-fill {
+    height: 100%;
+    background: var(--gold);
+    transition: width 0.5s;
+    border-radius: 4px;
+  }
+
+  @media (max-width: 600px) {
+    .compare-grid { grid-template-columns: 1fr; }
+    .tab-btn { padding: 10px 14px; font-size: 0.8rem; }
+    .content { padding: 16px 12px 60px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div>
+    <h1>Quiz 1 Study Guide</h1>
+    <div class="subtitle">Vanderbilt — Macroeconomics for Business</div>
+  </div>
+  <div style="text-align:right">
+    <div class="subtitle">Quiz: Tuesday, March 24</div>
+    <div style="margin-top:6px">
+      <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+      <div style="font-size:0.75rem;color:#aaa;margin-top:2px"><span id="progressText">0</span> of <span id="totalQs">0</span> practice Qs revealed</div>
+    </div>
+  </div>
+</div>
+
+<div class="tab-nav">
+  <button class="tab-btn active" onclick="showTab('gdp')">1. GDP Fundamentals</button>
+  <button class="tab-btn" onclick="showTab('growth')">2. Long-Run Growth</button>
+  <button class="tab-btn" onclick="showTab('adas')">3. AD-AS Model</button>
+  <button class="tab-btn" onclick="showTab('fiscal')">4. Fiscal Policy</button>
+  <button class="tab-btn" onclick="showTab('cases')">5. Cases</button>
+  <button class="tab-btn" onclick="showTab('quiz')">Practice Quiz</button>
+</div>
+
+<div class="content">
+
+<!-- ===================== TAB 1: GDP FUNDAMENTALS ===================== -->
+<div class="tab-panel active" id="tab-gdp">
+
+  <div class="card highlight">
+    <h2>What is GDP and Why Do We Measure It?</h2>
+    <p>GDP (Gross Domestic Product) is the <span class="term">total market value of all final goods and services produced within a country in a given period</span>. It's the single most-watched number for gauging an economy's size and health.</p>
+
+    <p style="margin-top:12px"><strong>Why evaluate economies?</strong> Governments, firms, and investors need to compare economic performance across countries and over time. GDP tells us the overall size of economic activity. Inflation tells us whether prices are stable. Unemployment tells us whether labor resources are being used. Together, these three metrics paint a picture of economic health that drives policy decisions, investment flows, and business strategy.</p>
+  </div>
+
+  <div class="card concept">
+    <h2>The Production Function — How GDP Grows</h2>
+    <p>The production function is the foundational model for understanding <em>where output comes from</em>:</p>
+
+    <div class="formula">Y = A × f(L, K)</div>
+
+    <p style="margin-top:10px">Where:</p>
+    <table>
+      <tr><th>Variable</th><th>Meaning</th><th>Real-world example</th></tr>
+      <tr><td><strong>Y</strong></td><td>Total output (GDP)</td><td>Everything produced in a year</td></tr>
+      <tr><td><strong>A</strong></td><td>Total Factor Productivity (TFP / technology)</td><td>Better software, management practices, innovation</td></tr>
+      <tr><td><strong>L</strong></td><td>Labor (participation)</td><td>More workers entering workforce, immigration, longer hours</td></tr>
+      <tr><td><strong>K</strong></td><td>Capital</td><td>Factories, machines, computers, infrastructure</td></tr>
+    </table>
+
+    <div class="mnemonic">
+      <strong>Remember the 3 ways to grow GDP:</strong> More workers (↑L), more machines/tools (↑K), or smarter ways of combining them (↑A / productivity). This is DIRECTLY from review question 1a.
+    </div>
+
+    <details>
+      <summary>Deep Dive: Why Productivity (A) Matters Most</summary>
+      <div class="detail-content">
+        <p>Adding more labor and capital has <strong>diminishing returns</strong> — the 1,000th worker adds less than the 10th worker. But productivity growth (A) shifts the entire function upward, meaning you get <em>more output from the same inputs</em>.</p>
+        <p style="margin-top:8px">This is why economists obsess over productivity. Countries that rely only on adding labor and capital (like Singapore pre-1992 — see the case!) eventually hit a wall. Sustained long-run growth requires <strong>technological progress and innovation</strong>.</p>
+        <p style="margin-top:8px"><strong>Sources of productivity growth:</strong> education/human capital, R&D and innovation, better institutions and governance, technology adoption, trade openness (access to global best practices).</p>
+      </div>
+    </details>
+  </div>
+
+  <div class="card warning">
+    <h2>GDP's Limitations — Review Q1b</h2>
+    <p>This is a quiz favorite. GDP is useful but <strong>deeply flawed</strong> as a measure of well-being:</p>
+
+    <details>
+      <summary>What GDP Misses (know these cold)</summary>
+      <div class="detail-content">
+        <ul>
+          <li><strong>Income inequality:</strong> GDP per capita is an average. A country with GDP/capita of $60K could have billionaires and poverty side by side. GDP doesn't tell you how the pie is distributed across groups, regions, races, genders, etc.</li>
+          <li><strong>Non-market activity:</strong> Household work, caregiving, volunteer work — none counted in GDP.</li>
+          <li><strong>Quality of life:</strong> Education, healthcare access, life expectancy, happiness, environmental quality — GDP ignores all of these.</li>
+          <li><strong>Underground economy:</strong> Informal and illegal economic activity isn't captured.</li>
+          <li><strong>Sustainability:</strong> GDP counts depleting natural resources as "production" with no deduction for environmental damage.</li>
+          <li><strong>Regional variation:</strong> National GDP masks huge differences between states/provinces. Mississippi vs. Connecticut in the US, for example.</li>
+        </ul>
+        <p style="margin-top:10px"><strong>Key insight for the quiz:</strong> GDP/capita can look great while large segments of the population are struggling. It's a measure of <em>production</em>, not <em>prosperity</em> or <em>well-being</em>.</p>
+      </div>
+    </details>
+  </div>
+
+  <div class="card">
+    <h2>GDP Components (Expenditure Approach)</h2>
+    <div class="formula">GDP = C + I + G + (X − M)</div>
+    <table>
+      <tr><th>Component</th><th>What it is</th><th>~% of US GDP</th></tr>
+      <tr><td><strong>C</strong> — Consumption</td><td>Household spending on goods & services</td><td>~68%</td></tr>
+      <tr><td><strong>I</strong> — Investment</td><td>Business spending on capital + residential construction + inventories</td><td>~18%</td></tr>
+      <tr><td><strong>G</strong> — Government</td><td>Government purchases (NOT transfers like Social Security)</td><td>~17%</td></tr>
+      <tr><td><strong>X − M</strong> — Net Exports</td><td>Exports minus imports</td><td>~−3%</td></tr>
+    </table>
+    <p style="margin-top:10px"><strong>Why this matters:</strong> When the quiz asks about AD shifts, it's asking what's happening to C, I, G, or net exports. Consumption is by far the largest — which is why stimulus checks (boosting C) have such outsized effects.</p>
+  </div>
+
+  <div class="card">
+    <h2>Global Economic Environment: Country vs. Firm</h2>
+    <details>
+      <summary>Country-level concerns</summary>
+      <div class="detail-content">
+        <p>Countries care about macroeconomic stability: GDP growth, inflation, unemployment, trade balance, exchange rates, and fiscal/monetary policy. They set the "rules of the game" through regulation, trade agreements, and institutional quality.</p>
+      </div>
+    </details>
+    <details>
+      <summary>Firm-level concerns</summary>
+      <div class="detail-content">
+        <p>Firms operate <em>within</em> the macro environment but focus on market access, labor costs, supply chains, regulatory burden, taxation, political risk, and consumer demand. A country's macro health determines the playing field, but firms must also manage micro-level competitive dynamics.</p>
+        <p style="margin-top:8px"><strong>Key difference:</strong> Countries shape the environment; firms respond to it. A recession (macro) might push a firm to cut costs, pivot strategy, or exit a market. Strong GDP growth (macro) creates opportunity for firm expansion.</p>
+      </div>
+    </details>
+  </div>
+</div>
+
+<!-- ===================== TAB 2: LONG-RUN GROWTH ===================== -->
+<div class="tab-panel" id="tab-growth">
+
+  <div class="card highlight">
+    <h2>Accounting for Productivity Growth</h2>
+    <p>Long-run GDP growth comes from the production function. Economists decompose historical growth into contributions from each factor:</p>
+
+    <div class="formula">Growth in Y = Growth in A + α(Growth in K) + (1−α)(Growth in L)</div>
+
+    <p style="margin-top:10px">This is called <span class="term">growth accounting</span>. It tells us how much of a country's growth came from adding workers, adding capital, versus becoming more productive.</p>
+
+    <details>
+      <summary>Why this decomposition matters for the quiz</summary>
+      <div class="detail-content">
+        <p>The Singapore case is ALL about this. Singapore grew fast 1965-1992, but the question is: <em>was it sustainable?</em> If growth came mainly from ↑L and ↑K (factor accumulation), there are diminishing returns and growth will slow. If it came from ↑A (productivity), it's more sustainable.</p>
+        <p style="margin-top:8px">This is the Krugman critique: "perspiration vs. inspiration." Growth from sweat (more inputs) hits limits. Growth from smarts (better technology) doesn't.</p>
+      </div>
+    </details>
+  </div>
+
+  <div class="card concept">
+    <h2>Key Long-Run Growth Concepts</h2>
+
+    <details>
+      <summary>Diminishing Returns to Capital</summary>
+      <div class="detail-content">
+        <p>Each additional unit of capital (holding labor constant) produces less additional output. The first factory in a town creates lots of jobs and output. The 50th factory, not so much — you're running out of workers, infrastructure, etc.</p>
+        <p style="margin-top:8px">This means countries that grow by pouring in capital will eventually see growth slow unless productivity also improves.</p>
+      </div>
+    </details>
+
+    <details>
+      <summary>Human Capital vs. Physical Capital</summary>
+      <div class="detail-content">
+        <p><strong>Physical capital (K):</strong> Machines, buildings, infrastructure.</p>
+        <p><strong>Human capital:</strong> The skills, education, and health of the workforce. Often grouped with productivity (A) because educated workers are more productive.</p>
+        <p style="margin-top:8px">Singapore invested heavily in both — building infrastructure AND investing in education. The education piece feeds into long-run productivity.</p>
+      </div>
+    </details>
+
+    <details>
+      <summary>Institutions and Government Policy</summary>
+      <div class="detail-content">
+        <p>Good institutions (rule of law, property rights, low corruption, sound regulation) create the conditions for growth. Bad institutions tax entrepreneurship and discourage investment. Singapore's government played a <strong>very active role</strong>: directing investment, mandating savings (CPF), attracting FDI, and investing in education and infrastructure.</p>
+      </div>
+    </details>
+  </div>
+</div>
+
+<!-- ===================== TAB 3: AD-AS MODEL ===================== -->
+<div class="tab-panel" id="tab-adas">
+
+  <div class="card highlight">
+    <h2>The AD-AS Framework — The Core Model</h2>
+    <p>This is the single most important framework for the quiz. Every question about business cycles, inflation, recessions, and policy connects back to AD-AS.</p>
+
+    <div class="diagram-container">
+      <svg viewBox="0 0 520 360" xmlns="http://www.w3.org/2000/svg">
+        <!-- Axes -->
+        <line x1="60" y1="300" x2="480" y2="300" stroke="#333" stroke-width="2"/>
+        <line x1="60" y1="300" x2="60" y2="30" stroke="#333" stroke-width="2"/>
+        <text x="480" y="320" font-size="14" fill="#333" font-weight="bold">Y / GDP</text>
+        <text x="30" y="30" font-size="14" fill="#333" font-weight="bold">P</text>
+
+        <!-- MRAS (vertical) -->
+        <line x1="270" y1="50" x2="270" y2="290" stroke="#1C2541" stroke-width="2.5" stroke-dasharray="8,4"/>
+        <text x="275" y="45" font-size="12" fill="#1C2541" font-weight="bold">MRAS</text>
+
+        <!-- SRAS (upward sloping) -->
+        <path d="M 90 260 Q 200 240 270 180 Q 340 120 400 60" stroke="#10b981" stroke-width="2.5" fill="none"/>
+        <text x="400" y="55" font-size="12" fill="#10b981" font-weight="bold">SRAS</text>
+
+        <!-- AD (downward sloping) -->
+        <line x1="100" y1="70" x2="430" y2="270" stroke="#3b82f6" stroke-width="2.5"/>
+        <text x="430" y="265" font-size="12" fill="#3b82f6" font-weight="bold">AD</text>
+
+        <!-- Equilibrium point -->
+        <circle cx="270" cy="180" r="6" fill="#CFAE70" stroke="#333" stroke-width="1.5"/>
+        <text x="280" y="175" font-size="12" fill="#333" font-weight="bold">E₀</text>
+
+        <!-- Labels -->
+        <text x="260" y="315" font-size="11" fill="#666">Y*</text>
+        <line x1="270" y1="300" x2="270" y2="295" stroke="#666" stroke-width="1"/>
+        <text x="25" y="185" font-size="11" fill="#666">P*</text>
+        <line x1="55" y1="180" x2="65" y2="180" stroke="#666" stroke-width="1"/>
+        <line x1="65" y1="180" x2="265" y2="180" stroke="#999" stroke-width="0.5" stroke-dasharray="4,4"/>
+      </svg>
+    </div>
+  </div>
+
+  <div class="card concept">
+    <h2>Understanding Each Curve</h2>
+
+    <table>
+      <tr><th>Curve</th><th>What it represents</th><th>Shape & Why</th></tr>
+      <tr>
+        <td><strong>AD</strong><br>(Aggregate Demand)</td>
+        <td>Total spending in the economy (C + I + G + NX) at each price level</td>
+        <td><strong>Downward sloping:</strong> Higher prices → less purchasing power → less spending. Also: higher prices → higher interest rates → less investment; higher domestic prices → less competitive exports.</td>
+      </tr>
+      <tr>
+        <td><strong>SRAS</strong><br>(Short-Run Aggregate Supply)</td>
+        <td>Total output firms are willing to produce at each price level (with sticky wages/prices)</td>
+        <td><strong>Upward sloping:</strong> Higher prices with fixed wages → higher profit margins → firms produce more. Becomes steeper near capacity (hard to produce more when you're maxed out).</td>
+      </tr>
+      <tr>
+        <td><strong>MRAS</strong><br>(Medium/Long-Run Aggregate Supply)</td>
+        <td>Potential GDP — the economy's full-employment output</td>
+        <td><strong>Vertical at Y*:</strong> In the long run, output depends on real factors (labor, capital, technology), not the price level. The economy produces at capacity regardless of prices.</td>
+      </tr>
+    </table>
+  </div>
+
+  <div class="card warning">
+    <h2>Shifting the Curves — Know What Moves What</h2>
+
+    <div class="compare-grid">
+      <div class="compare-item">
+        <h4 style="color:#3b82f6">AD Shifters (Demand Side)</h4>
+        <ul>
+          <li><strong>Consumer confidence</strong> (↑ shifts AD right)</li>
+          <li><strong>Government spending</strong> (↑G shifts AD right)</li>
+          <li><strong>Tax cuts</strong> (more disposable income → ↑C → AD right)</li>
+          <li><strong>Interest rates</strong> (↓rates → ↑I → AD right)</li>
+          <li><strong>Exports</strong> (↑foreign demand → AD right)</li>
+          <li><strong>Stimulus checks</strong> (direct ↑C → AD right)</li>
+          <li><em>Lockdowns → ↓C, ↓I → AD LEFT</em></li>
+        </ul>
+      </div>
+      <div class="compare-item">
+        <h4 style="color:#10b981">SRAS Shifters (Supply Side)</h4>
+        <ul>
+          <li><strong>Input prices</strong> (↑oil, ↑wages → SRAS left)</li>
+          <li><strong>Supply chain disruptions</strong> (SRAS left)</li>
+          <li><strong>Productivity shocks</strong> (↑tech → SRAS right)</li>
+          <li><strong>Regulation</strong> (↑burden → SRAS left)</li>
+          <li><strong>Natural disasters</strong> (destroy capacity → SRAS left)</li>
+          <li><em>COVID supply chains → SRAS LEFT</em></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="mnemonic">
+      <strong>Quick test:</strong> "Does this event change how much people WANT to spend?" → AD shift. "Does this event change firms' costs or ability to produce?" → SRAS shift. "Does this event change the economy's total capacity?" → MRAS shift.
+    </div>
+  </div>
+
+  <div class="card danger">
+    <h2>COVID Pandemic Phases — THE Key AD-AS Application (Review Q2)</h2>
+    <p>This is almost certainly on the quiz. You need to know each phase, which curve shifted, which direction, and what happened to prices and output.</p>
+
+    <details>
+      <summary>Phase 0 → 1: Initial Lockdown (March 2020)</summary>
+      <div class="detail-content">
+        <p><strong>What happened:</strong> Government lockdowns, businesses closed, consumers stayed home. People couldn't or wouldn't spend money.</p>
+        <p><strong>Which curve:</strong> <span class="term">AD shifts LEFT</span> (massive drop in consumer spending and investment).</p>
+        <p><strong>Effect:</strong> Prices ↓, Output ↓ (GDP fell sharply). Economy moves from point 0 to point 1 on the diagram — southwest along the SRAS curve.</p>
+        <p><strong>The intuition:</strong> Demand collapsed. Nobody was eating out, traveling, shopping. Spending just evaporated. This is a textbook negative demand shock.</p>
+        <p style="margin-top:8px"><strong>GDP data:</strong> GDP fell from ~$21.6T to ~$20.6T (a ~$1T drop), creating a GDP gap.</p>
+      </div>
+    </details>
+
+    <details>
+      <summary>Phase 1 → 2: CARES Act Stimulus (2020)</summary>
+      <div class="detail-content">
+        <p><strong>What happened:</strong> $2T+ stimulus — direct checks ($1,200/person), enhanced unemployment ($600/week extra), PPP loans for businesses.</p>
+        <p><strong>Which curve:</strong> <span class="term">AD shifts RIGHT</span> — aggressively. The stimulus put money directly in consumers' pockets, boosting C significantly.</p>
+        <p><strong>Effect:</strong> Prices ↑, Output ↑. Economy moves from point 1 to point 2. But critically, the stimulus was SO large that AD shifted <em>beyond</em> the original equilibrium, pushing the economy past Y* (potential GDP).</p>
+        <p><strong>The intuition:</strong> The government flooded the economy with cash. People had more money than before the pandemic in some cases, but there were still fewer things to buy (supply hadn't recovered). Too much money chasing too few goods → inflation.</p>
+      </div>
+    </details>
+
+    <details>
+      <summary>Phase 2 → 3: Supply Chain Disruptions</summary>
+      <div class="detail-content">
+        <p><strong>What happened:</strong> Factory shutdowns abroad, shipping bottlenecks (remember the container ship in the Suez Canal?), semiconductor shortages, labor shortages as workers were slow to return.</p>
+        <p><strong>Which curve:</strong> <span class="term">SRAS shifts LEFT</span>. Firms' costs rose and their ability to produce fell.</p>
+        <p><strong>Effect:</strong> Prices ↑↑ (more inflation on top of demand-driven inflation), Output ↓ relative to phase 2. Economy moves to point 3 — northwest along the new AD curve.</p>
+        <p><strong>The intuition:</strong> Now you have BOTH excess demand AND constrained supply. This is the worst combination for inflation. Prices rose sharply through 2021-2022.</p>
+      </div>
+    </details>
+
+    <table style="margin-top:16px">
+      <tr><th>Transition</th><th>Curve Shift</th><th>Prices</th><th>Output (GDP)</th></tr>
+      <tr><td>0 → 1 (Lockdown)</td><td>AD shifts LEFT</td><td>↓</td><td>↓</td></tr>
+      <tr><td>1 → 2 (CARES Act)</td><td>AD shifts RIGHT (past Y*)</td><td>↑</td><td>↑</td></tr>
+      <tr><td>2 → 3 (Supply chains)</td><td>SRAS shifts LEFT</td><td>↑</td><td>↓</td></tr>
+    </table>
+  </div>
+
+  <div class="card">
+    <h2>Business Cycles — Why They Occur</h2>
+    <details>
+      <summary>What is a business cycle?</summary>
+      <div class="detail-content">
+        <p>The economy naturally fluctuates between expansion (growing GDP, falling unemployment) and contraction/recession (falling GDP, rising unemployment). These short-run fluctuations around the long-run trend are called <strong>business cycles</strong>.</p>
+        <p style="margin-top:8px"><strong>Why they happen:</strong></p>
+        <ul>
+          <li><strong>Demand shocks:</strong> Changes in consumer/business confidence, government spending, or external events that shift AD</li>
+          <li><strong>Supply shocks:</strong> Oil price spikes, natural disasters, pandemics that shift SRAS</li>
+          <li><strong>Financial crises:</strong> Credit crunches, bank failures that freeze lending (2008)</li>
+          <li><strong>Policy mistakes:</strong> Central banks tightening too fast, governments over-stimulating</li>
+          <li><strong>Sticky wages and prices:</strong> The economy doesn't adjust instantly to shocks — wages and prices are slow to change, causing temporary recessions</li>
+        </ul>
+      </div>
+    </details>
+
+    <details>
+      <summary>Why is the price level important?</summary>
+      <div class="detail-content">
+        <p>The price level is like a thermometer for the economy. It tells you whether the economy is running "hot" (above potential → inflation) or "cold" (below potential → deflation/recession).</p>
+        <ul>
+          <li><strong>Rising prices (inflation):</strong> Often signals demand > supply. Economy may be overheating. Can erode purchasing power.</li>
+          <li><strong>Falling prices (deflation):</strong> Often signals weak demand. Dangerous because consumers delay purchases expecting lower prices, creating a downward spiral.</li>
+          <li><strong>Stable prices:</strong> Signal the economy is near equilibrium — AD and AS are balanced at potential GDP.</li>
+        </ul>
+        <p style="margin-top:8px">The price level, combined with output, tells you exactly where you are on the AD-AS diagram and what kind of policy response is needed.</p>
+      </div>
+    </details>
+  </div>
+
+  <div class="card">
+    <h2>The 2008 Financial Crisis (via "The Big Short")</h2>
+    <details>
+      <summary>Main causes of the real estate bubble</summary>
+      <div class="detail-content">
+        <ul>
+          <li><strong>Subprime mortgages:</strong> Banks gave loans to people who couldn't afford them (low "teaser" rates that spiked later)</li>
+          <li><strong>Securitization & CDOs:</strong> Banks bundled risky mortgages into complex securities (Collateralized Debt Obligations), spreading risk through the financial system</li>
+          <li><strong>Rating agency failures:</strong> Agencies rated junk mortgage-backed securities as AAA (safe), misleading investors</li>
+          <li><strong>Moral hazard:</strong> Banks didn't care about loan quality because they sold the risk to others</li>
+          <li><strong>Lax regulation:</strong> Insufficient oversight of mortgage lending and derivatives markets</li>
+          <li><strong>Speculation:</strong> Housing prices kept rising → people bought homes as investments → further inflated bubble</li>
+        </ul>
+      </div>
+    </details>
+    <details>
+      <summary>AD-AS effects: Before and After the Crisis</summary>
+      <div class="detail-content">
+        <p><strong>Before (bubble):</strong> Easy credit → excessive consumption and investment → AD pushed right beyond Y* → economy overheating, asset prices inflating.</p>
+        <p><strong>After (crash):</strong> Bubble bursts → banks fail → credit freezes → massive drop in C and I → <strong>AD shifts sharply left</strong>. Output plummets, unemployment surges. Some SRAS effects too as firms cut capacity. This was primarily a demand-side crisis.</p>
+      </div>
+    </details>
+  </div>
+</div>
+
+<!-- ===================== TAB 4: FISCAL POLICY ===================== -->
+<div class="tab-panel" id="tab-fiscal">
+
+  <div class="card highlight">
+    <h2>Fiscal Policy — Government Managing AD</h2>
+    <p>Fiscal policy means using <span class="term">government spending (G)</span> and <span class="term">taxation (T)</span> to influence aggregate demand. When the economy is in recession, the government can stimulate AD. When it's overheating, it can cool AD down.</p>
+
+    <div class="compare-grid">
+      <div class="compare-item">
+        <h4>Expansionary (Recession)</h4>
+        <ul>
+          <li>↑ Government spending</li>
+          <li>↓ Taxes (tax cuts)</li>
+          <li>Direct transfers/stimulus</li>
+          <li>Goal: Shift AD RIGHT</li>
+        </ul>
+      </div>
+      <div class="compare-item">
+        <h4>Contractionary (Overheating)</h4>
+        <ul>
+          <li>↓ Government spending</li>
+          <li>↑ Taxes</li>
+          <li>Reduce transfers</li>
+          <li>Goal: Shift AD LEFT</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="card danger">
+    <h2>Three Critical Concepts (Review Q3a)</h2>
+    <p>The review question asks you to connect these three concepts. You MUST know how they work together.</p>
+
+    <details>
+      <summary>1. GDP Gap</summary>
+      <div class="detail-content">
+        <div class="formula">GDP Gap = Potential GDP (Y*) − Actual GDP</div>
+        <p>The GDP gap tells you <em>how far</em> the economy has fallen below its capacity. In the pandemic, GDP fell from ~$21.6T to ~$20.6T, creating roughly a <strong>$1 trillion gap</strong>.</p>
+        <p style="margin-top:8px">The gap is the "target" — fiscal policy needs to close it. But you don't need to spend $1T to close a $1T gap, because of the multiplier.</p>
+      </div>
+    </details>
+
+    <details>
+      <summary>2. Consumption Function & Marginal Propensity to Consume (MPC)</summary>
+      <div class="detail-content">
+        <div class="formula">C = C₀ + MPC × (Y − T)</div>
+        <p>Where C₀ is autonomous consumption (baseline spending regardless of income), and MPC is the fraction of each additional dollar of income that gets spent (not saved).</p>
+        <p style="margin-top:8px"><strong>MPC example:</strong> If MPC = 0.67, then for every $1 of extra income, people spend $0.67 and save $0.33.</p>
+        <p style="margin-top:8px"><strong>Why it matters:</strong> MPC drives the multiplier. When the government gives someone $1,000, they spend $670 of it. That $670 becomes someone else's income, who then spends $449 of it (67%). And so on. This cascading spending is the multiplier effect.</p>
+      </div>
+    </details>
+
+    <details>
+      <summary>3. The Multiplier</summary>
+      <div class="detail-content">
+        <div class="formula">Multiplier = 1 / (1 − MPC)</div>
+        <p>The multiplier tells you the <em>total GDP impact</em> of each dollar of government spending. If MPC = 0.67, the multiplier = 1/(1−0.67) = ~3. But in the review, the professor gives you <strong>multiplier = 1.5</strong> (which implies real-world frictions like savings leakage, imports, etc.).</p>
+
+        <div style="background:#fef3c7;padding:14px;border-radius:8px;margin-top:12px">
+          <strong>The key calculation (Review Q3a):</strong><br><br>
+          GDP Gap ≈ $1 Trillion<br>
+          Multiplier = 1.5<br><br>
+          Required Stimulus = GDP Gap / Multiplier<br>
+          <strong>= $1T / 1.5 = ~$0.67T ($670 billion)</strong><br><br>
+          Logic: Each $1 of stimulus creates $1.50 of GDP. So to fill a $1T hole, you only need $667B.
+        </div>
+      </div>
+    </details>
+  </div>
+
+  <div class="card warning">
+    <h2>The CARES Act — Was It Too Much? (Review Q3b)</h2>
+    <p>The actual CARES Act was <strong>~$2 Trillion</strong>. Your calculation says you only needed ~$0.67T. That means the stimulus was roughly <strong>3x larger than needed</strong>.</p>
+
+    <details>
+      <summary>What happens when stimulus is too large?</summary>
+      <div class="detail-content">
+        <p>If the GDP gap is $1T and you inject $2T × 1.5 multiplier = $3T of GDP impact, you're not just closing the gap — you're <strong>pushing AD well past potential GDP (Y*)</strong>.</p>
+        <p style="margin-top:8px">On the AD-AS diagram, this means AD shifts right <em>beyond</em> the MRAS line. When the economy operates above potential:</p>
+        <ul>
+          <li>Firms can't produce enough to meet demand</li>
+          <li>Prices get bid up → <strong>inflation</strong></li>
+          <li>Labor markets tighten → wage pressures → more inflation</li>
+        </ul>
+        <p style="margin-top:8px"><strong>This is exactly what happened in 2021-2022.</strong> Too much money chasing too few goods, compounded by supply chain disruptions (SRAS shifting left). The result was the highest inflation in 40 years.</p>
+        <p style="margin-top:8px"><strong>Counterargument (what policymakers would say):</strong> The GDP gap was uncertain in real time. They didn't know if the lockdowns would last months or years. Over-stimulating was seen as less risky than under-stimulating (which is what happened with the timid 2009 response to the financial crisis). But in hindsight, it was too much.</p>
+      </div>
+    </details>
+  </div>
+
+  <div class="card">
+    <h2>COVID vs. 2008 Financial Crisis</h2>
+    <table>
+      <tr><th>Dimension</th><th>2008 Financial Crisis</th><th>COVID-19 Pandemic</th></tr>
+      <tr><td><strong>Cause</strong></td><td>Financial sector collapse (endogenous)</td><td>External health shock (exogenous)</td></tr>
+      <tr><td><strong>Speed</strong></td><td>Slow burn — unfolded over months</td><td>Sudden, unprecedented shutdown</td></tr>
+      <tr><td><strong>Primary effect</strong></td><td>Demand shock (credit freeze → ↓C, ↓I)</td><td>BOTH demand AND supply shock simultaneously</td></tr>
+      <tr><td><strong>Recovery path</strong></td><td>Slow (took years, jobs didn't return quickly)</td><td>Potentially fast if virus resolved (V-shaped hope)</td></tr>
+      <tr><td><strong>Policy response</strong></td><td>Criticized as too small/slow</td><td>Massive and rapid — maybe too large</td></tr>
+      <tr><td><strong>Complication</strong></td><td>Needed to fix banking system</td><td>Needed to fix public health AND economy simultaneously</td></tr>
+    </table>
+
+    <div class="mnemonic" style="margin-top:14px">
+      <strong>Why COVID was uniquely complicated:</strong> You couldn't just stimulate spending — spending itself (going to stores, restaurants) was the health risk. Social, political, AND economic dimensions were all intertwined. The virus didn't respect economic policy. Lockdowns hit both AD (people couldn't spend) and AS (firms couldn't produce) simultaneously.
+    </div>
+  </div>
+</div>
+
+<!-- ===================== TAB 5: CASES ===================== -->
+<div class="tab-panel" id="tab-cases">
+
+  <div class="card highlight">
+    <h2>Singapore Case (1965-1992)</h2>
+    <p>This case is a direct application of the production function and growth accounting concepts.</p>
+
+    <details>
+      <summary>How did Singapore perform 1965-1992?</summary>
+      <div class="detail-content">
+        <p>Spectacularly. Singapore went from a poor developing country to one of the wealthiest in Asia in just 27 years. GDP growth averaged ~8-9% per year — transformative, sustained growth that lifted the entire population.</p>
+      </div>
+    </details>
+
+    <details>
+      <summary>Role of Government Policies</summary>
+      <div class="detail-content">
+        <ul>
+          <li><strong>Central Provident Fund (CPF):</strong> Mandatory savings program (up to 40% of wages). Channeled savings into investment, housing, and retirement. This dramatically increased the capital stock (↑K).</li>
+          <li><strong>Foreign Direct Investment (FDI):</strong> Aggressively courted multinational corporations with tax incentives, infrastructure, and a business-friendly environment. Brought in capital AND technology transfer.</li>
+          <li><strong>Education investment:</strong> Heavy emphasis on technical education and skills training to build human capital.</li>
+          <li><strong>Housing (HDB):</strong> Government-built housing for 80%+ of population — provided stability and freed income for other spending.</li>
+          <li><strong>Export-oriented industrialization:</strong> Positioned Singapore as a manufacturing hub, then moved up the value chain.</li>
+          <li><strong>Authoritarian efficiency:</strong> Lee Kuan Yew's government could implement policies rapidly without political gridlock.</li>
+        </ul>
+      </div>
+    </details>
+
+    <details>
+      <summary>Role of Contextual Factors</summary>
+      <div class="detail-content">
+        <ul>
+          <li><strong>Strategic location:</strong> At the crossroads of major shipping lanes (Strait of Malacca) — natural trading hub.</li>
+          <li><strong>Colonial legacy:</strong> British institutions, English language, legal framework provided foundation for international business.</li>
+          <li><strong>Small size:</strong> Easier to manage and implement policies uniformly. No regional disparities to navigate.</li>
+          <li><strong>Cold War context:</strong> Western nations had strategic interest in Singapore's success as a capitalist model in Southeast Asia.</li>
+        </ul>
+      </div>
+    </details>
+
+    <details>
+      <summary>The Productivity Question: Should Singapore Change Strategy?</summary>
+      <div class="detail-content">
+        <p><strong>The problem (Krugman/Young critique):</strong> Growth accounting showed Singapore's growth came primarily from <em>factor accumulation</em> (↑L through immigration and female workforce participation, ↑K through forced savings and FDI), NOT from productivity growth (A). TFP growth was near zero.</p>
+        <p style="margin-top:8px"><strong>Why this matters:</strong> Growth from adding inputs faces <em>diminishing returns</em>. You can't keep adding workers and capital forever. Without productivity growth, Singapore's miracle would stall.</p>
+        <p style="margin-top:8px"><strong>Should they change?</strong> Yes — the strategy needed to shift from <em>perspiration</em> (more inputs) to <em>inspiration</em> (innovation, R&D, moving up the value chain to higher-productivity industries). Singapore needed to develop its own technological capabilities rather than just assembling other countries' products.</p>
+      </div>
+    </details>
+  </div>
+
+  <div class="card">
+    <h2>COVID Pandemic Case — Policy Response</h2>
+    <details>
+      <summary>What policymakers got right</summary>
+      <div class="detail-content">
+        <ul>
+          <li><strong>Speed:</strong> The CARES Act passed in just 2 weeks (vs. months for 2008 response). Speed prevented a cascade of bankruptcies.</li>
+          <li><strong>Direct payments:</strong> Putting money directly in people's hands was fast and effective at supporting consumption.</li>
+          <li><strong>PPP loans:</strong> Kept businesses alive and employees on payroll during lockdowns, preserving productive capacity.</li>
+          <li><strong>Enhanced unemployment:</strong> The extra $600/week replaced income for millions of suddenly-unemployed workers.</li>
+          <li><strong>Learning from 2008:</strong> The response to the financial crisis was widely criticized as too small and too slow. Policymakers erred on the side of doing too much.</li>
+        </ul>
+      </div>
+    </details>
+    <details>
+      <summary>What policymakers got wrong</summary>
+      <div class="detail-content">
+        <ul>
+          <li><strong>Overshoot:</strong> $2T stimulus for a ~$1T GDP gap (with 1.5x multiplier, only ~$670B was needed). This contributed to inflation.</li>
+          <li><strong>Lack of targeting:</strong> Checks went to people who hadn't lost income and were saving more (wealthy households). Money went to demand when the problem was partly supply.</li>
+          <li><strong>Moral hazard with PPP:</strong> Many loans went to companies that didn't need them or were used for non-payroll purposes. Fraud was rampant.</li>
+          <li><strong>Enhanced unemployment too generous?:</strong> $600/week extra meant some workers earned more unemployed than employed, potentially slowing labor market recovery.</li>
+          <li><strong>Ignoring supply side:</strong> Policy focused on boosting demand, but COVID was also a supply shock. Pumping demand when supply is constrained = inflation.</li>
+        </ul>
+      </div>
+    </details>
+  </div>
+
+  <div class="card">
+    <h2>Presentation Topics Context</h2>
+    <details>
+      <summary>Greece's 2007+ Financial Crisis (Presentation 1)</summary>
+      <div class="detail-content">
+        <p>Greece had massive government debt, budget deficits, and a loss of competitiveness within the Eurozone. When the 2008 global crisis hit, investors questioned Greece's ability to repay. The resulting sovereign debt crisis led to bailouts with harsh austerity conditions, deep recession, and social unrest. Key AD-AS connection: austerity (↓G) shifted AD left, deepening the recession even as it tried to fix fiscal problems.</p>
+      </div>
+    </details>
+    <details>
+      <summary>Sri Lanka's Fiscal Policy & 2022 Default (Presentation 2)</summary>
+      <div class="detail-content">
+        <p>Sri Lanka pursued unsustainable fiscal policy: large tax cuts (reducing revenue), excessive government borrowing, costly infrastructure projects, and an abrupt shift to organic farming that devastated agricultural output (SRAS shock). When foreign reserves ran out and they couldn't repay debt, the country defaulted. Shows the danger of irresponsible fiscal policy and ignoring supply-side constraints.</p>
+      </div>
+    </details>
+  </div>
+</div>
+
+<!-- ===================== TAB 6: PRACTICE QUIZ ===================== -->
+<div class="tab-panel" id="tab-quiz">
+
+  <div class="card highlight">
+    <h2>Practice Quiz — Test Yourself</h2>
+    <p>These questions cover the same concepts as your review guide but are phrased differently to test real understanding. Try to answer each one before revealing the answer.</p>
+  </div>
+
+  <div class="quiz-q">
+    <div class="q-label">Question 1 — Production Function</div>
+    <p>Country X has no population growth and no new investment. The only way it can grow GDP is through ___. Explain why the other two sources won't work.</p>
+    <button class="answer-btn" onclick="toggleAnswer(this)">Reveal Answer</button>
+    <div class="answer-text"><strong>Productivity growth (↑A / Total Factor Productivity).</strong> Without population growth, labor (L) isn't increasing. Without new investment, capital (K) isn't increasing. The only remaining factor in Y = A × f(L,K) is A — doing more with the same inputs through innovation, better technology, improved management, or institutional reform. This is also why productivity growth is the most important source of long-run sustainable growth.</div>
+  </div>
+
+  <div class="quiz-q">
+    <div class="q-label">Question 2 — GDP Limitations</div>
+    <p>Country A and Country B both have GDP per capita of $50,000. Can you conclude their citizens have similar living standards? Why or why not?</p>
+    <button class="answer-btn" onclick="toggleAnswer(this)">Reveal Answer</button>
+    <div class="answer-text"><strong>No.</strong> GDP per capita is an average and hides critical differences: (1) <strong>Income distribution</strong> — Country A might have equality while Country B has extreme inequality (a few billionaires pulling up the average). (2) <strong>Quality of life</strong> — one country may have better healthcare, education, or life expectancy. (3) <strong>Cost of living</strong> — $50K goes further in some places than others. (4) <strong>Non-market factors</strong> — environmental quality, safety, freedom, leisure time. (5) <strong>Regional variation</strong> — national averages mask huge differences across regions, racial/ethnic groups, and genders.</div>
+  </div>
+
+  <div class="quiz-q">
+    <div class="q-label">Question 3 — AD-AS Identification</div>
+    <p>A major oil-producing region experiences political instability, cutting global oil supply by 20%. On an AD-AS diagram, which curve shifts, in which direction? What happens to prices and output?</p>
+    <button class="answer-btn" onclick="toggleAnswer(this)">Reveal Answer</button>
+    <div class="answer-text"><strong>SRAS shifts LEFT.</strong> Oil is a key input cost for virtually all production. Higher oil prices raise firms' costs across the board, reducing their willingness to supply at any given price level. Result: <strong>Prices ↑, Output ↓</strong>. This combination (rising prices + falling output) is called <strong>stagflation</strong> — the worst of both worlds. This is a supply shock, not a demand shock.</div>
+  </div>
+
+  <div class="quiz-q">
+    <div class="q-label">Question 4 — Fiscal Policy Calculation</div>
+    <p>An economy has potential GDP of $10 trillion and actual GDP of $9.2 trillion. The multiplier is 2.0. How large should the fiscal stimulus be?</p>
+    <button class="answer-btn" onclick="toggleAnswer(this)">Reveal Answer</button>
+    <div class="answer-text"><strong>$400 billion.</strong> GDP Gap = $10T − $9.2T = $0.8T ($800 billion). Required stimulus = GDP Gap / Multiplier = $800B / 2.0 = <strong>$400B</strong>. Each dollar of stimulus creates $2 of GDP, so $400B generates $800B, exactly closing the gap. If the government spent $800B+ instead, AD would overshoot Y*, causing inflation — just like the CARES Act did.</div>
+  </div>
+
+  <div class="quiz-q">
+    <div class="q-label">Question 5 — COVID Phases</div>
+    <p>During the pandemic, Phase 1 (lockdown) and Phase 3 (supply chains) both reduced GDP. But their effects on prices were opposite. Explain why.</p>
+    <button class="answer-btn" onclick="toggleAnswer(this)">Reveal Answer</button>
+    <div class="answer-text">They affected <strong>different curves</strong>. Phase 1 shifted <strong>AD left</strong>: when demand drops, both prices AND output fall (move down-left along SRAS). Phase 3 shifted <strong>SRAS left</strong>: when supply decreases, output falls but prices RISE (firms produce less but charge more because costs are higher). This is the critical distinction between demand shocks (prices and output move together) and supply shocks (prices and output move in opposite directions). Supply shocks are harder to fix because stimulating demand would raise prices even more.</div>
+  </div>
+
+  <div class="quiz-q">
+    <div class="q-label">Question 6 — Singapore</div>
+    <p>Economists in 1992 argued Singapore's growth was "not a miracle." What did they mean, and why did it matter for Singapore's future strategy?</p>
+    <button class="answer-btn" onclick="toggleAnswer(this)">Reveal Answer</button>
+    <div class="answer-text">Growth accounting showed Singapore's GDP growth came almost entirely from <strong>factor accumulation</strong> (adding more labor through immigration/participation and more capital through forced savings/FDI), with nearly <strong>zero TFP/productivity growth</strong>. This isn't "miraculous" — it's just throwing more inputs in. The problem: factor accumulation faces <strong>diminishing returns</strong>. You eventually run out of new workers to add and returns on capital decline. For growth to continue, Singapore needed to shift strategy toward <strong>innovation, R&D, and moving up the value chain</strong> — generating productivity growth (↑A) rather than just input growth.</div>
+  </div>
+
+  <div class="quiz-q">
+    <div class="q-label">Question 7 — Multiplier Logic</div>
+    <p>Explain in plain English WHY a $1 government stimulus creates MORE than $1 of GDP. What is the mechanism?</p>
+    <button class="answer-btn" onclick="toggleAnswer(this)">Reveal Answer</button>
+    <div class="answer-text">It's a <strong>chain reaction of spending</strong>. When the government gives you $1,000, you spend some fraction (your MPC, say 67%) = $670 at local businesses. That $670 is now income for those businesses/workers, who spend 67% of it = $449. That becomes someone else's income, who spends $301. And so on. Each "round" of spending gets smaller (because people save some each time), but the total adds up to more than the original $1,000. With MPC = 0.67, the multiplier = 1/(1-0.67) ≈ 3. In practice, the multiplier is smaller (~1.5) because of leakages: taxes, imports (spending goes abroad), and savings.</div>
+  </div>
+
+  <div class="quiz-q">
+    <div class="q-label">Question 8 — Policy Tradeoffs</div>
+    <p>Why might a government deliberately choose a stimulus package LARGER than the GDP gap calculation suggests?</p>
+    <button class="answer-btn" onclick="toggleAnswer(this)">Reveal Answer</button>
+    <div class="answer-text">Several reasons: (1) <strong>Uncertainty</strong> — in real time, you don't know the exact GDP gap or multiplier. Undershooting risks prolonged recession (the 2009 mistake). (2) <strong>Speed of implementation</strong> — getting money out fast may matter more than getting the amount exactly right. (3) <strong>Insurance against worse outcomes</strong> — if the crisis deepens, you want a buffer. (4) <strong>Political economy</strong> — it's easier to pass one large bill than go back for more. (5) <strong>Hysteresis</strong> — prolonged recessions can cause permanent damage (workers lose skills, businesses close forever). The risk of doing too little may outweigh the risk of inflation from doing too much. The tradeoff: overshoot = inflation; undershoot = prolonged recession.</div>
+  </div>
+
+  <div class="quiz-q">
+    <div class="q-label">Question 9 — 2008 vs. COVID</div>
+    <p>Why was the COVID crisis harder to solve with traditional fiscal policy than the 2008 financial crisis?</p>
+    <button class="answer-btn" onclick="toggleAnswer(this)">Reveal Answer</button>
+    <div class="answer-text">COVID hit <strong>both AD AND AS simultaneously</strong>, while 2008 was primarily a demand shock. Traditional fiscal policy (stimulus) boosts AD. This works well for demand shortfalls. But COVID also constrained supply (lockdowns closed businesses, supply chains broke). Boosting demand when supply is restricted just causes inflation without fully restoring output. Additionally, the core problem was a <strong>health crisis</strong> — economic activity itself was the risk. You couldn't just encourage spending when going to stores/restaurants could spread the virus. The crisis was social, political, AND economic all at once.</div>
+  </div>
+
+  <div class="quiz-q">
+    <div class="q-label">Question 10 — Curve Identification Rapid Fire</div>
+    <p>For each event, identify: which curve shifts, which direction, and what happens to P and Y.<br>
+    (a) Consumer confidence surges after vaccine announcement<br>
+    (b) A hurricane destroys 30% of the nation's oil refineries<br>
+    (c) Government raises taxes on all income brackets<br>
+    (d) A technological breakthrough makes manufacturing 20% cheaper</p>
+    <button class="answer-btn" onclick="toggleAnswer(this)">Reveal Answer</button>
+    <div class="answer-text">
+      <strong>(a) AD shifts RIGHT.</strong> Higher confidence → more spending (↑C). P↑, Y↑.<br><br>
+      <strong>(b) SRAS shifts LEFT.</strong> Destroyed supply capacity → higher production costs. P↑, Y↓ (stagflation).<br><br>
+      <strong>(c) AD shifts LEFT.</strong> Higher taxes → less disposable income → ↓C. P↓, Y↓.<br><br>
+      <strong>(d) SRAS shifts RIGHT.</strong> Lower production costs → firms can produce more at every price level. P↓, Y↑. This is the best kind of shock — more output at lower prices.
+    </div>
+  </div>
+
+</div>
+<!-- end tabs -->
+</div>
+
+<script>
+function showTab(tabId) {
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-' + tabId).classList.add('active');
+  event.target.classList.add('active');
+  window.scrollTo({top: 0, behavior: 'smooth'});
+}
+
+function toggleAnswer(btn) {
+  const answerDiv = btn.nextElementSibling;
+  const isVisible = answerDiv.classList.contains('visible');
+  answerDiv.classList.toggle('visible');
+  btn.textContent = isVisible ? 'Reveal Answer' : 'Hide Answer';
+  updateProgress();
+}
+
+function updateProgress() {
+  const total = document.querySelectorAll('.answer-text').length;
+  const revealed = document.querySelectorAll('.answer-text.visible').length;
+  document.getElementById('totalQs').textContent = total;
+  document.getElementById('progressText').textContent = revealed;
+  document.getElementById('progressFill').style.width = (revealed/total*100) + '%';
+}
+
+// Initialize
+updateProgress();
+</script>
+
+</body>
+</html>
